@@ -4,28 +4,26 @@ using ClientServer.Utilities.Enums;
 
 namespace ClientServer.Models;
 
-public class Booking
+[Table("tb_tr_bookings")]
+public class Booking : BaseTable
 {
-    [Key]
-    public Guid Guid { get; set; }
-    
+    [Column("start_date")]
     public DateTime StartDate { get; set; }
     
+    [Column("end_date")]
     public DateTime EndDate { get; set; }
     
+    [Column("status")]
     public StatusLevel Status { get; set; }
     
+    [Column("remarks")]
     public string Remarks { get; set; }
     
-    [ForeignKey("Room")]
+    [Column("room_guid"), ForeignKey("Room")]
     public Guid RoomGuid { get; set; }
     
-    [ForeignKey("Employee")]
+    [Column("employee_guid"), ForeignKey("Employee")]
     public Guid EmployeeGuid { get; set; }
-    
-    public DateTime CreatedDate { get; set; }
-    
-    public DateTime ModifiedDate { get; set; }
 
     public virtual Room Room { get; set; }
     public virtual Employee Employee { get; set; }

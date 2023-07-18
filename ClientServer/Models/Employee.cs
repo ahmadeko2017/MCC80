@@ -1,40 +1,37 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using ClientServer.Utilities.Enums;
 
 namespace ClientServer.Models;
 
-public class Employee
+[Table("tb_m_employees")]
+public class Employee : BaseTable
 {
-    [Key]
-    public Guid Guid { get; set; }
-    
-    [StringLength(6)]
+    [Column("nik"), StringLength(6)]
     public string NIK { get; set; }
     
-    [MaxLength(100)]
+    [Column("first_name"), MaxLength(100)]
     public string FirstName { get; set; }
 
-    [MaxLength(100)]
+    [Column("last_name"), MaxLength(100)]
     public string? LastName { get; set; }
     
+    [Column("birth_date")]
     public DateTime BirthDate { get; set; }
     
+    [Column("gender")]
     public GenderLevel Gender { get; set; }
     
+    [Column("hiring_date")]
     public DateTime HiringDate { get; set; }
     
-    [MaxLength(100)]
-    [EmailAddress]
+    [Column("email"), MaxLength(100), EmailAddress]
     public string Email { get; set; }
 
-    [MaxLength(20)]
+    [Column("phone_number"), MaxLength(20)]
     public string PhoneNumber { get; set; }
-    
-    public DateTime CreatedDate { get; set; }
-    
-    public DateTime ModifiedDate { get; set; }
-    
+
     public virtual ICollection<Booking> Bookings { get; set; }
-    public virtual ICollection<Account> Accounts { get; set; }
-    public virtual ICollection<Education> Educations { get; set; }
+    public virtual Account Account { get; set; }
+    public virtual Education Education { get; set; }
 }

@@ -1,22 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClientServer.Models;
 
-public class Room
+[Table("tb_m_rooms")]
+public class Room : BaseTable
 {
-    [Key]
-    public Guid Guid { get; set; }
-    
-    [MaxLength(100)]
+    [Column("name"), MaxLength(100)]
     public string Name { get; set; }
     
+    [Column("floor")]
     public int Floor { get; set; }
     
+    [Column("capacity")]
     public int Capacity { get; set; }
-    
-    public DateTime CreatedDate { get; set; }
-    
-    public DateTime ModifiedTime { get; set; }
-    
+
     public virtual ICollection<Booking> Bookings { get; set; }
 }

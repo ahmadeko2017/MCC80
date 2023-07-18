@@ -3,24 +3,26 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClientServer.Models;
 
-public class Account
+[Table("tb_m_accounts")]
+public class Account: BaseTable
 {
-    [Key, ForeignKey("Employee")]
+    [Key, ForeignKey("Employee"), Column("guid")]
     public Guid Guid { get; set; }
     
+    [Column ("password")]
     public string Password { get; set; }
     
+    [Column("is_deleted")]
     public bool IsDeleted { get; set; }
     
+    [Column("otp")]
     public int OTP { get; set; }
     
+    [Column("is_used")]
     public bool IsUsed { get; set; }
     
+    [Column("expired_time")]
     public DateTime ExpiredTime { get; set; }
-    
-    public DateTime CreatedDate { get; set; }
-    
-    public DateTime ModifiedDate { get; set; }
 
     public virtual Employee Employee { get; set; }
     

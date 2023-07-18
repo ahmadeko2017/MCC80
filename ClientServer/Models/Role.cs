@@ -1,18 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClientServer.Models;
 
-public class Role
+[Table("tb_m_roles")]
+public class Role : BaseTable
 {
-    [Key]
-    public Guid Guid { get; set; }
-    
-    [MaxLength(100)]
+    [Column("name"), MaxLength(100)]
     public string Name { get; set; }
-    
-    public DateTime CreatedDate { get; set; }
-    
-    public DateTime ModifiedDate { get; set; }
-    
+
     public virtual ICollection<AccountRole> AccountRoles { get; set; }
 }
