@@ -1,4 +1,5 @@
 using ClientServer.Contracts;
+using ClientServer.Controllers;
 using ClientServer.Data;
 using ClientServer.Models;
 using ClientServer.Repositories;
@@ -23,6 +24,7 @@ builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
 var app = builder.Build();
 
