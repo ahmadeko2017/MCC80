@@ -6,7 +6,7 @@ namespace ClientServer.Controllers;
 
 
 [ApiController]
-[Route("api/bookings")]
+[Route("api/educations")]
 public class EducationController : ControllerBase
 {
     private readonly IEducationRepository _educationRepository;

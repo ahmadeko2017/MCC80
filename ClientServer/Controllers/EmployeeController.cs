@@ -6,7 +6,7 @@ namespace ClientServer.Controllers;
 
 
 [ApiController]
-[Route("api/bookings")]
+[Route("api/employees")]
 public class EmployeeController : ControllerBase
 {
     private readonly IEmployeeRepository _employeeRepository;
