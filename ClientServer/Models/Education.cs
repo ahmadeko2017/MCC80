@@ -22,6 +22,6 @@ public class Education : BaseTable
     [Column("university_guid"), ForeignKey("University")]
     public Guid UniversityGuid { get; set; }
 
-    public virtual University University { get; set; }
-    public virtual Employee Employee { get; set; }
+    public virtual University? University { get; set; }
+    public virtual Employee? Employee { get; set; }
 }

@@ -12,5 +12,5 @@ public class University : BaseTable
     [Column("name"), MaxLength(100)]
     public string Name { get; set; }
 
-    public virtual ICollection<Education> Educations { get; set; }
+    public virtual ICollection<Education>? Educations { get; set; }
 }

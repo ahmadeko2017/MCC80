@@ -9,5 +9,5 @@ public class Role : BaseTable
     [Column("name"), MaxLength(100)]
     public string Name { get; set; }
 
-    public virtual ICollection<AccountRole> AccountRoles { get; set; }
+    public virtual ICollection<AccountRole>? AccountRoles { get; set; }
 }

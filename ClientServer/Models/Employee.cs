@@ -31,7 +31,7 @@ public class Employee : BaseTable
     [Column("phone_number"), MaxLength(20)]
     public string PhoneNumber { get; set; }
 
-    public virtual ICollection<Booking> Bookings { get; set; }
-    public virtual Account Account { get; set; }
-    public virtual Education Education { get; set; }
+    public virtual ICollection<Booking>? Bookings { get; set; }
+    public virtual Account? Account { get; set; }
+    public virtual Education? Education { get; set; }
 }

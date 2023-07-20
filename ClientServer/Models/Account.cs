@@ -24,7 +24,7 @@ public class Account: BaseTable
     [Column("expired_time")]
     public DateTime ExpiredTime { get; set; }
 
-    public virtual Employee Employee { get; set; }
+    public virtual Employee? Employee { get; set; }
     
-    public virtual ICollection<AccountRole> AccountRoles { get; set; }
+    public virtual ICollection<AccountRole>? AccountRoles { get; set; }
 }

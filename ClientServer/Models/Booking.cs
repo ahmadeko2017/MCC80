@@ -25,6 +25,6 @@ public class Booking : BaseTable
     [Column("employee_guid"), ForeignKey("Employee")]
     public Guid EmployeeGuid { get; set; }
 
-    public virtual Room Room { get; set; }
-    public virtual Employee Employee { get; set; }
+    public virtual Room? Room { get; set; }
+    public virtual Employee? Employee { get; set; }
 }

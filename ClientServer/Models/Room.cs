@@ -15,5 +15,5 @@ public class Room : BaseTable
     [Column("capacity")]
     public int Capacity { get; set; }
 
-    public virtual ICollection<Booking> Bookings { get; set; }
+    public virtual ICollection<Booking>? Bookings { get; set; }
 }

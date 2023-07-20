@@ -12,6 +12,6 @@ public class AccountRole : BaseTable
     [ForeignKey("Role")]
     public Guid RoleGuid { get; set; }
 
-    public virtual Account Account { get; set; }
-    public virtual Role Role { get; set; }
+    public virtual Account? Account { get; set; }
+    public virtual Role? Role { get; set; }
 }
