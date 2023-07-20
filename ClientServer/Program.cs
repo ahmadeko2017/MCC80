@@ -1,5 +1,6 @@
 using ClientServer.Contracts;
 using ClientServer.Data;
+using ClientServer.Models;
 using ClientServer.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +17,9 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<BookingDbContext>(options => options.UseSqlServer(connectionString));
 
+// Add Scope
 builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
 var app = builder.Build();
 

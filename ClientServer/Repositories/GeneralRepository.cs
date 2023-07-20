@@ -7,7 +7,7 @@ public class GeneralRepository<TEntity> : IGeneralRepository<TEntity> where TEnt
 {
     protected readonly BookingDbContext _context;
 
-    GeneralRepository(BookingDbContext context)
+    protected GeneralRepository(BookingDbContext context)
     {
         _context = context;
     }
