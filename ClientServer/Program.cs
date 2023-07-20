@@ -25,6 +25,7 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddScoped<IEducationRepository, EducationRepository>();
 builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
 
 var app = builder.Build();
