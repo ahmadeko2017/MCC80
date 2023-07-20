@@ -7,7 +7,7 @@ namespace ClientServer.Repositories;
 public class BookingRepository : GeneralRepository<Booking>, IBookingRepository
 {
     /// <inheritdoc />
-    protected BookingRepository(BookingDbContext context) : base(context)
+    public BookingRepository(BookingDbContext context) : base(context)
     {
     }
 }
