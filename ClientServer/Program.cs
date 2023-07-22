@@ -3,6 +3,7 @@ using ClientServer.Controllers;
 using ClientServer.Data;
 using ClientServer.Models;
 using ClientServer.Repositories;
+using ClientServer.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,9 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IEducationRepository, EducationRepository>();
 builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
+
+// Add service
+builder.Services.AddScoped<UniversityService>();
 
 var app = builder.Build();
 
