@@ -41,15 +41,15 @@ public class UniversityService
         return (UniversityDto)university;
     }
 
-    public UniversityDto? Create(UniversityDto universityDto)
+    public NewUniversityDto? Create(NewUniversityDto newUniversityDto)
     {
-        var university = _universityRepository.Create(universityDto);
+        var university = _universityRepository.Create(newUniversityDto);
         if (university is null)
         {
             return null;
         }
 
-        return (UniversityDto)university;
+        return (NewUniversityDto)university;
     }
 
     public int Update(UniversityDto universityDto)

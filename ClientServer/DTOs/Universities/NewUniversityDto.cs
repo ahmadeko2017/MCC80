@@ -4,7 +4,6 @@ namespace ClientServer.DTOs.Universities;
 
 public class NewUniversityDto
 {
-    public Guid Guid { get; set; }
     public string Code { get; set; }
     public string Name { get; set; }
 
@@ -24,7 +23,6 @@ public class NewUniversityDto
     {
         return new NewUniversityDto()
         {
-            Guid = university.Guid,
             Code = university.Code,
             Name = university.Name
         };

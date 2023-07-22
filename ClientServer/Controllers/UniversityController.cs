@@ -1,26 +1,24 @@
-﻿using ClientServer.Contracts;
-using ClientServer.DTOs.Universities;
-using ClientServer.Models;
+﻿using ClientServer.DTOs.Universities;
 using ClientServer.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientServer.Controllers;
 
 [ApiController]
-[Route("api/univerities")]
+[Route("api/universities")]
 public class UniversityController : ControllerBase
 {
-    private readonly UniversityService _universityController;
+    private readonly UniversityService _universityService;
     
-    public UniversityController(UniversityService universityController)
+    public UniversityController(UniversityService universityService)
     {
-        _universityController = universityController;
+        _universityService = universityService;
     }
 
     [HttpGet]
     public IActionResult GetAll()
     {
-        var result = _universityController.GetAll();
+        var result = _universityService.GetAll();
         if (!result.Any())
         {
             return NotFound("No data found");
@@ -32,19 +30,19 @@ public class UniversityController : ControllerBase
     [HttpGet("{guid}")]
     public IActionResult GetByGuid(Guid guid)
     {
-        var result = _universityController.GetByGuid(guid);
+        var result = _universityService.GetByGuid(guid);
         if (result is null)
         {
-            return NotFound();
+            return NotFound("No data found");
         }
 
         return Ok(result);
     }
 
     [HttpPost]
-    public IActionResult Insert(UniversityDto universityDto)
+    public IActionResult Insert(NewUniversityDto newUniversityDto)
     {
-        var result = _universityController.Create(universityDto);
+        var result = _universityService.Create(newUniversityDto);
         if (result is null)
         {
             return StatusCode(500, "Error Retrieve from database");
@@ -56,7 +54,7 @@ public class UniversityController : ControllerBase
     [HttpPut]
     public IActionResult Update(UniversityDto universityDto)
     {
-        var result = _universityController.Update(universityDto);
+        var result = _universityService.Update(universityDto);
         if (result is -1)
         {
             return NotFound("Guid is not found");
@@ -73,7 +71,7 @@ public class UniversityController : ControllerBase
     [HttpDelete]
     public IActionResult Delete(Guid guid)
     {
-        var result = _universityController.Delete(guid);
+        var result = _universityService.Delete(guid);
         if (result is -1)
         {
             return NotFound("Guid is not found");
