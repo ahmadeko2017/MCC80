@@ -9,7 +9,7 @@ namespace ClientServer.Controllers;
 public class RoleController : ControllerBase
 {
     private readonly RoleService _roleService;
-
+    
     public RoleController(RoleService roleService)
     {
         _roleService = roleService;
@@ -26,7 +26,7 @@ public class RoleController : ControllerBase
 
         return Ok(result);
     }
-
+    
     [HttpGet("{guid}")]
     public IActionResult GetByGuid(Guid guid)
     {
@@ -45,12 +45,12 @@ public class RoleController : ControllerBase
         var result = _roleService.Create(newRoleDto);
         if (result is null)
         {
-            return StatusCode(500, "Error Retrieve from database");
+            return StatusCode(500, "Error retrieving data from the database");
         }
 
         return Ok(result);
     }
-
+    
     [HttpPut]
     public IActionResult Update(RoleDto roleDto)
     {
@@ -62,12 +62,12 @@ public class RoleController : ControllerBase
 
         if (result is 0)
         {
-            return StatusCode(500, "Error Retrieve from database");
+            return StatusCode(500, "Error retrieving data from the database");
         }
 
         return Ok("Update success");
     }
-
+    
     [HttpDelete]
     public IActionResult Delete(Guid guid)
     {
@@ -79,7 +79,7 @@ public class RoleController : ControllerBase
 
         if (result is 0)
         {
-            return StatusCode(500, "Error Retrieve from database");
+            return StatusCode(500, "Error retrieving data from the database");
         }
 
         return Ok("Delete success");

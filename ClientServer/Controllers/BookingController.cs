@@ -1,5 +1,5 @@
-﻿using ClientServer.Contracts;
-using ClientServer.Models;
+﻿using ClientServer.DTOs.Bookings;
+using ClientServer.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientServer.Controllers;
@@ -8,20 +8,20 @@ namespace ClientServer.Controllers;
 [Route("api/bookings")]
 public class BookingController : ControllerBase
 {
-    private readonly IBookingRepository _bookingRepository;
+    private readonly BookingService _bookingService;
     
-    public BookingController(IBookingRepository bookingRepository)
+    public BookingController(BookingService bookingService)
     {
-        _bookingRepository = bookingRepository;
+        _bookingService = bookingService;
     }
 
     [HttpGet]
     public IActionResult GetAll()
     {
-        var result = _bookingRepository.GetAll();
+        var result = _bookingService.GetAll();
         if (!result.Any())
         {
-            return NotFound();
+            return NotFound("No data found");
         }
 
         return Ok(result);
@@ -30,40 +30,39 @@ public class BookingController : ControllerBase
     [HttpGet("{guid}")]
     public IActionResult GetByGuid(Guid guid)
     {
-        var result = _bookingRepository.GetByGuid(guid);
+        var result = _bookingService.GetByGuid(guid);
         if (result is null)
         {
-            return NotFound();
+            return NotFound("No data found");
         }
 
         return Ok(result);
     }
 
     [HttpPost]
-    public IActionResult Insert(Booking booking)
+    public IActionResult Insert(NewBookingDto newBookingDto)
     {
-        var result = _bookingRepository.Create(booking);
+        var result = _bookingService.Create(newBookingDto);
         if (result is null)
         {
-            return StatusCode(500, "Error Retrieve from database");
+            return StatusCode(500, "Error retrieving data from the database");
         }
 
         return Ok(result);
     }
     
     [HttpPut]
-    public IActionResult Update(Booking booking)
+    public IActionResult Update(BookingDto bookingDto)
     {
-        var check = _bookingRepository.GetByGuid(booking.Guid);
-        if (check is null)
+        var result = _bookingService.Update(bookingDto);
+        if (result is -1)
         {
             return NotFound("Guid is not found");
         }
-        
-        var result = _bookingRepository.Update(booking);
-        if (!result)
+
+        if (result is 0)
         {
-            return StatusCode(500, "Error Retrieve from database");
+            return StatusCode(500, "Error retrieving data from the database");
         }
 
         return Ok("Update success");
@@ -72,16 +71,15 @@ public class BookingController : ControllerBase
     [HttpDelete]
     public IActionResult Delete(Guid guid)
     {
-        var data = _bookingRepository.GetByGuid(guid);
-        if (data is null)
+        var result = _bookingService.Delete(guid);
+        if (result is -1)
         {
             return NotFound("Guid is not found");
         }
-        
-        var result = _bookingRepository.Delete(data);
-        if (!result)
+
+        if (result is 0)
         {
-            return StatusCode(500, "Error Retrieve from database");
+            return StatusCode(500, "Error retrieving data from the database");
         }
 
         return Ok("Delete success");

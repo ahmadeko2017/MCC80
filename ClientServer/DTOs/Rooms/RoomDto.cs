@@ -1,9 +1,11 @@
 ﻿using ClientServer.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace ClientServer.DTOs.Rooms;
 
 public class RoomDto
 {
+    public Guid Guid { get; set; }
     public string Name { get; set; }
     public int Floor { get; set; }
     public int Capacity { get; set; }
@@ -12,7 +14,7 @@ public class RoomDto
     {
         return new Room()
         {
-            Guid = new Guid(),
+            Guid = roomDto.Guid,
             Name = roomDto.Name,
             Floor = roomDto.Floor,
             Capacity = roomDto.Capacity,
@@ -25,6 +27,7 @@ public class RoomDto
     {
         return new RoomDto()
         {
+            Guid = room.Guid,
             Name = room.Name,
             Floor = room.Floor,
             Capacity = room.Capacity

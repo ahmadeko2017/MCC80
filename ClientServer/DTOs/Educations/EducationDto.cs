@@ -2,7 +2,7 @@
 
 namespace ClientServer.DTOs.Educations;
 
-public class EducationsDto
+public class EducationDto
 {
     public Guid Guid { get; set; }
     public string Major { get; set; }
@@ -10,23 +10,23 @@ public class EducationsDto
     public float GPA { get; set; }
     public Guid UniversityGuid { get; set; }
 
-    public static implicit operator Education(EducationsDto educationsDto)
+    public static implicit operator Education(EducationDto educationDto)
     {
         return new Education()
         {
-            Guid = educationsDto.Guid,
-            Major = educationsDto.Major,
-            Degree = educationsDto.Degree,
-            GPA = educationsDto.GPA,
-            UniversityGuid = educationsDto.Guid,
+            Guid = educationDto.Guid,
+            Major = educationDto.Major,
+            Degree = educationDto.Degree,
+            GPA = educationDto.GPA,
+            UniversityGuid = educationDto.Guid,
             CreatedDate = DateTime.Now,
             ModifiedDate = DateTime.Now
         };
     }
 
-    public static explicit operator EducationsDto(Education education)
+    public static explicit operator EducationDto(Education education)
     {
-        return new EducationsDto()
+        return new EducationDto()
         {
             Guid = education.Guid,
             Major = education.Major,

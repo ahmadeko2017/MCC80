@@ -4,7 +4,6 @@ namespace ClientServer.DTOs.Rooms;
 
 public class NewRoomDto
 {
-    public Guid Guid { get; set; }
     public string Name { get; set; }
     public int Floor { get; set; }
     public int Capacity { get; set; }
@@ -13,7 +12,7 @@ public class NewRoomDto
     {
         return new Room()
         {
-            Guid = newRoomDto.Guid,
+            Guid = new Guid(),
             Name = newRoomDto.Name,
             Floor = newRoomDto.Floor,
             Capacity = newRoomDto.Capacity,
@@ -26,7 +25,6 @@ public class NewRoomDto
     {
         return new NewRoomDto()
         {
-            Guid = room.Guid,
             Name = room.Name,
             Floor = room.Floor,
             Capacity = room.Capacity
