@@ -1,5 +1,5 @@
-﻿using ClientServer.DTOs.Employees;
-using ClientServer.DTOs.Roles;
+﻿using ClientServer.Contracts;
+using ClientServer.DTOs.Employees;
 using ClientServer.Models;
 using ClientServer.Repositories;
 
@@ -7,28 +7,28 @@ namespace ClientServer.Services;
 
 public class EmployeeService
 {
-    private readonly EmployeeRepository _employeeRepository;
+    private readonly IEmployeeRepository _employeeRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository)
+    public EmployeeService(IEmployeeRepository employeeRepository)
     {
         _employeeRepository = employeeRepository;
     }
-
+    
     public IEnumerable<EmployeeDto> GetAll()
     {
-        var roles = _employeeRepository.GetAll();
-        if (!roles.Any())
+        var employees = _employeeRepository.GetAll();
+        if (!employees.Any())
         {
             return Enumerable.Empty<EmployeeDto>();
         }
 
-        var employees = new List<EmployeeDto>();
+        var employeesDtos = new List<EmployeeDto>();
         foreach (var employee in employees)
         {
-            employees.Add((EmployeeDto)employee);
+            employeesDtos.Add((EmployeeDto)employee);
         }
 
-        return employees;
+        return employeesDtos;
     }
 
     public EmployeeDto? GetByGuid(Guid guid)

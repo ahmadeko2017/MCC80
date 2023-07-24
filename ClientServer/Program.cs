@@ -1,9 +1,13 @@
+using System.Reflection;
 using ClientServer.Contracts;
 using ClientServer.Controllers;
 using ClientServer.Data;
 using ClientServer.Models;
 using ClientServer.Repositories;
 using ClientServer.Services;
+using ClientServer.Validator;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,9 +15,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 // Add DbContext
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -31,6 +32,21 @@ builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
 
 // Add service
 builder.Services.AddScoped<UniversityService>();
+builder.Services.AddScoped<RoomService>();
+builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<EducationService>();
+builder.Services.AddScoped<BookingService>();
+builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<AccountRoleService>();
+
+// Register FluentValidation
+builder.Services.AddFluentValidationAutoValidation()
+    .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
