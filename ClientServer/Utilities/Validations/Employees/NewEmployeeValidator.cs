@@ -21,8 +21,6 @@ public class NewEmployeeValidator : AbstractValidator<NewEmployeeDto>
             .IsInEnum();
         RuleFor(e => e.HiringDate)
             .NotEmpty();
-        RuleFor(e => e.HiringDate)
-            .NotEmpty();
         RuleFor(e => e.Email)
             .NotEmpty().WithMessage("Email is required")
             .EmailAddress().WithMessage("Email is not valid")
