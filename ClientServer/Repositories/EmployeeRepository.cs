@@ -24,4 +24,22 @@ public class EmployeeRepository : GeneralRepository<Employee>, IEmployeeReposito
             .LastOrDefault()
             ?.NIK;
     }
+
+    #region Implementation of IEmployeeRepository
+
+    /// <inheritdoc />
+    public bool IsSameGuid(Guid guid)
+    {
+        Employee? employee = GetByGuid(guid);
+        if (employee is null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    #endregion
 }

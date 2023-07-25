@@ -1,14 +1,15 @@
-﻿using ClientServer.Contracts;
+﻿using System.ComponentModel.DataAnnotations;
+using ClientServer.Contracts;
 using ClientServer.DTOs.Employees;
 using FluentValidation;
 
 namespace ClientServer.Utilities.Validations.Employees;
 
-public class NewEmployeeValidator : AbstractValidator<NewEmployeeDto>
+public class EmployeeValidator : AbstractValidator<EmployeeDto>
 {
     private readonly IEmployeeRepository _employeeRepository;
 
-    public NewEmployeeValidator(IEmployeeRepository employeeRepository)
+    public EmployeeValidator(IEmployeeRepository employeeRepository)
     {
         _employeeRepository = employeeRepository;
         RuleFor(e => e.FirstName)
@@ -24,22 +25,31 @@ public class NewEmployeeValidator : AbstractValidator<NewEmployeeDto>
         RuleFor(e => e.Email)
             .NotEmpty().WithMessage("Email is required")
             .EmailAddress().WithMessage("Email is not valid")
-            .Must(IsDuplicateValue).WithMessage("Email already exist");
+            .Must((e, s) => IsDuplicateValue(e.Email, e.Guid)).WithMessage("Email already exist");
         RuleFor(e => e.PhoneNumber)
             .NotEmpty()
             .MaximumLength(20)
             .Matches(@"^\+[0-9]").WithMessage("Incorect format number")
-            .Must(IsDuplicateValue).WithMessage("Phone number already exists");
+            .Must((e, s) => IsDuplicateValue(s, e.Guid)).WithMessage("Phone number already exists");
     }
 
-    private bool IsDuplicateValue(string arg)
+    private bool IsDuplicateValue(string arg, Guid guid)
     {
-        return _employeeRepository.IsNotExist(arg);
+        var temp = false;
+        var (email, phone) = GetEmailPhone(guid);
+        if (arg == email || arg == phone)
+        {
+            temp = true;
+        }
+
+        var result = _employeeRepository.IsNotExist(arg) || temp;
+        return result;
     }
 
-    private bool IsSameGuid(Guid guid)
+    private (string?, string?) GetEmailPhone(Guid guid)
     {
-        return _employeeRepository.IsSameGuid(guid);
+        var employee = _employeeRepository.GetByGuid(guid);
+        return (employee.Email, employee.PhoneNumber);
     }
     
 }
