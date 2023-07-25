@@ -17,4 +17,11 @@ public class EmployeeRepository : GeneralRepository<Employee>, IEmployeeReposito
             .SingleOrDefault(e => e.Email.Contains(value)
                                                    || e.PhoneNumber.Contains(value)) is null;
     }
+
+    public string? GetLastNik()
+    {
+        return _context.Set<Employee>().OrderBy(e => e.NIK)
+            .LastOrDefault()
+            ?.NIK;
+    }
 }

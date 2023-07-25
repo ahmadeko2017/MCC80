@@ -2,6 +2,7 @@
 using ClientServer.DTOs.Employees;
 using ClientServer.Models;
 using ClientServer.Repositories;
+using ClientServer.Utilities.Handlers;
 
 namespace ClientServer.Services;
 
@@ -44,7 +45,11 @@ public class EmployeeService
 
     public NewEmployeeDto? Create(NewEmployeeDto newEmployeeDto)
     {
-        var employee = _employeeRepository.Create(newEmployeeDto);
+        var lastNik = _employeeRepository.GetLastNik();
+        Employee emp = newEmployeeDto;
+        emp.NIK = GenerateHandler.NIK(lastNik);
+        
+        var employee = _employeeRepository.Create(emp);
         if (employee is null)
         {
             return null;

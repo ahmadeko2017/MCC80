@@ -9,7 +9,7 @@ public class NewRoomValidator : AbstractValidator<NewRoomDto>
 {
     private readonly IRoomRepository _roomRepository;
     
-    private NewRoomValidator(IRoomRepository roomRepository)
+    public NewRoomValidator(IRoomRepository roomRepository)
     {
         _roomRepository = roomRepository;
 

@@ -19,8 +19,8 @@ public class EmployeeDto
     {
         return new Employee()
         {
-            Guid = employeeDto.Guid,
             NIK = employeeDto.NIK,
+            Guid = employeeDto.Guid,
             FirstName = employeeDto.FirstName,
             LastName = employeeDto.LastName,
             BirthDate = employeeDto.BirthDate,
@@ -37,8 +37,8 @@ public class EmployeeDto
     {
         return new EmployeeDto()
         {
-            Guid = employee.Guid,
             NIK = employee.NIK,
+            Guid = employee.Guid,
             FirstName = employee.FirstName,
             LastName = employee.LastName,
             BirthDate = employee.BirthDate,
