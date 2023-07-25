@@ -5,7 +5,6 @@ using ClientServer.Data;
 using ClientServer.Models;
 using ClientServer.Repositories;
 using ClientServer.Services;
-using ClientServer.Validator;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;

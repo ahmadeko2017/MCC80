@@ -1,5 +1,8 @@
-﻿using ClientServer.DTOs.Educations;
+﻿using System.Net;
+using ClientServer.DTOs.Educations;
+using ClientServer.DTOs.Universities;
 using ClientServer.Services;
+using ClientServer.Utilities.Handlers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientServer.Controllers;
@@ -21,10 +24,21 @@ public class EducationController : ControllerBase
         var result = _educationService.GetAll();
         if (!result.Any())
         {
-            return NotFound("No data found");
+            return NotFound(new ResponseHandler<EducationDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
-        return Ok(result);
+        return Ok(new ResponseHandler<IEnumerable<EducationDto>>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
     
     [HttpGet("{guid}")]
@@ -33,10 +47,21 @@ public class EducationController : ControllerBase
         var result = _educationService.GetByGuid(guid);
         if (result is null)
         {
-            return NotFound("No data found");
+            return NotFound(new ResponseHandler<EducationDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
-        return Ok(result);
+        return Ok(new ResponseHandler<EducationDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
 
     [HttpPost]
@@ -45,10 +70,22 @@ public class EducationController : ControllerBase
         var result = _educationService.Create(educationDto);
         if (result is null)
         {
-            return StatusCode(500, "Error retrieving data from the database");
+            return StatusCode(500, new ResponseHandler<EducationDto>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Error retrieving data from the database"
+            });
         }
 
-        return Ok(result);
+        return Ok(new ResponseHandler<EducationDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success retrieving data",
+                Data = result
+            }
+        );
     }
     
     [HttpPut]
@@ -57,15 +94,31 @@ public class EducationController : ControllerBase
         var result = _educationService.Update(educationDto);
         if (result is -1)
         {
-            return NotFound("Guid is not found");
+            return NotFound(new ResponseHandler<EducationDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
         if (result is 0)
         {
-            return StatusCode(500, "Error retrieving data from the database");
+            return StatusCode(500, new ResponseHandler<EducationDto>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Error retrieving data from the database"
+            });
         }
 
-        return Ok("Update success");
+        return Ok(new ResponseHandler<int>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
     
     [HttpDelete]
@@ -74,14 +127,30 @@ public class EducationController : ControllerBase
         var result = _educationService.Delete(guid);
         if (result is -1)
         {
-            return NotFound("Guid is not found");
+            return NotFound(new ResponseHandler<EducationDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
         if (result is 0)
         {
-            return StatusCode(500, "Error retrieving data from the database");
+            return StatusCode(500, new ResponseHandler<EducationDto>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Error retrieving data from the database"
+            });
         }
 
-        return Ok("Delete success");
+        return Ok(new ResponseHandler<int>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
 }

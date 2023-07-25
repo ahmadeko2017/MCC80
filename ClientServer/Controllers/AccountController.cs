@@ -1,5 +1,8 @@
-﻿using ClientServer.DTOs.Accounts;
+﻿using System.Net;
+using ClientServer.DTOs.Accounts;
+using ClientServer.DTOs.Universities;
 using ClientServer.Services;
+using ClientServer.Utilities.Handlers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientServer.Controllers;
@@ -21,10 +24,21 @@ public class AccountController : ControllerBase
         var result = _accountService.GetAll();
         if (!result.Any())
         {
-            return NotFound("No data found");
+            return NotFound(new ResponseHandler<AccountDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
-        return Ok(result);
+        return Ok(new ResponseHandler<IEnumerable<AccountDto>>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
     
     [HttpGet("{guid}")]
@@ -33,10 +47,21 @@ public class AccountController : ControllerBase
         var result = _accountService.GetByGuid(guid);
         if (result is null)
         {
-            return NotFound("No data found");
+            return NotFound(new ResponseHandler<AccountDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
-        return Ok(result);
+        return Ok(new ResponseHandler<AccountDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
 
     [HttpPost]
@@ -45,10 +70,21 @@ public class AccountController : ControllerBase
         var result = _accountService.Create(accountDto);
         if (result is null)
         {
-            return StatusCode(500, "Error retrieving data from the database");
+            return StatusCode(500, new ResponseHandler<AccountDto>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Error retrieving data from the database"
+            });
         }
 
-        return Ok(result);
+        return Ok(new ResponseHandler<AccountDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
     
     [HttpPut]
@@ -57,15 +93,31 @@ public class AccountController : ControllerBase
         var result = _accountService.Update(accountDto);
         if (result is -1)
         {
-            return NotFound("Guid is not found");
+            return NotFound(new ResponseHandler<AccountDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
         if (result is 0)
         {
-            return StatusCode(500, "Error retrieving data from the database");
+            return StatusCode(500, new ResponseHandler<AccountDto>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Error retrieving data from the database"
+            });
         }
 
-        return Ok("Update success");
+        return Ok(new ResponseHandler<int>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
     
     [HttpDelete]
@@ -74,14 +126,30 @@ public class AccountController : ControllerBase
         var result = _accountService.Delete(guid);
         if (result is -1)
         {
-            return NotFound("Guid is not found");
+            return NotFound(new ResponseHandler<AccountDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
         if (result is 0)
         {
-            return StatusCode(500, "Error retrieving data from the database");
+            return StatusCode(500, new ResponseHandler<AccountDto>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Error retrieving data from the database"
+            });
         }
 
-        return Ok("Delete success");
+        return Ok(new ResponseHandler<int>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
 }

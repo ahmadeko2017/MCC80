@@ -1,5 +1,9 @@
-﻿using ClientServer.DTOs.Bookings;
+﻿using System.Net;
+using ClientServer.DTOs.Bookings;
+using ClientServer.DTOs.Universities;
+using ClientServer.Models;
 using ClientServer.Services;
+using ClientServer.Utilities.Handlers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientServer.Controllers;
@@ -21,10 +25,21 @@ public class BookingController : ControllerBase
         var result = _bookingService.GetAll();
         if (!result.Any())
         {
-            return NotFound("No data found");
+            return NotFound(new ResponseHandler<BookingDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
-        return Ok(result);
+        return Ok(new ResponseHandler<IEnumerable<BookingDto>>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
     
     [HttpGet("{guid}")]
@@ -33,10 +48,21 @@ public class BookingController : ControllerBase
         var result = _bookingService.GetByGuid(guid);
         if (result is null)
         {
-            return NotFound("No data found");
+            return NotFound(new ResponseHandler<BookingDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
-        return Ok(result);
+        return Ok(new ResponseHandler<BookingDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
 
     [HttpPost]
@@ -45,10 +71,22 @@ public class BookingController : ControllerBase
         var result = _bookingService.Create(newBookingDto);
         if (result is null)
         {
-            return StatusCode(500, "Error retrieving data from the database");
+            return 
+                StatusCode(500, new ResponseHandler<NewBookingDto>
+                {
+                    Code = StatusCodes.Status500InternalServerError,
+                    Status = HttpStatusCode.InternalServerError.ToString(),
+                    Message = "Error retrieving data from the database"
+                });
         }
 
-        return Ok(result);
+        return Ok(new ResponseHandler<NewBookingDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
     
     [HttpPut]
@@ -57,15 +95,32 @@ public class BookingController : ControllerBase
         var result = _bookingService.Update(bookingDto);
         if (result is -1)
         {
-            return NotFound("Guid is not found");
+            return NotFound(new ResponseHandler<BookingDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
         if (result is 0)
         {
-            return StatusCode(500, "Error retrieving data from the database");
+            return StatusCode(500, new ResponseHandler<NewBookingDto>
+                {
+                    Code = StatusCodes.Status500InternalServerError,
+                    Status = HttpStatusCode.InternalServerError.ToString(),
+                    Message = "Error retrieving data from the database"
+                })
+                ;
         }
 
-        return Ok("Update success");
+        return Ok(new ResponseHandler<int>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
     
     [HttpDelete]
@@ -74,14 +129,30 @@ public class BookingController : ControllerBase
         var result = _bookingService.Delete(guid);
         if (result is -1)
         {
-            return NotFound("Guid is not found");
+            return NotFound(new ResponseHandler<UniversityDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid is not found"
+            });
         }
 
         if (result is 0)
         {
-            return StatusCode(500, "Error retrieving data from the database");
+            return StatusCode(500, new ResponseHandler<BookingDto>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Error retrieving data from the database"
+            });
         }
 
-        return Ok("Delete success");
+        return Ok(new ResponseHandler<int>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
     }
 }
