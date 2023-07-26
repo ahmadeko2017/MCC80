@@ -1,5 +1,6 @@
 ﻿using ClientServer.Contracts;
 using ClientServer.DTOs.Bookings;
+using ClientServer.DTOs.Rooms;
 using ClientServer.Models;
 
 namespace ClientServer.Services;
@@ -77,5 +78,27 @@ public class BookingService
 
         var result = _bookingRepository.Delete(booking);
         return result ? 1 : 0;
+    }
+    
+    public IEnumerable<RoomDto> FreeRoomsToday()
+    {
+        var freeRoomToday = _bookingRepository.GetFreeRoomsToday();
+        if (!freeRoomToday.Any())
+        {
+            return null; // No free room today
+        }
+
+        return freeRoomToday; // free room today
+    }
+
+    public IEnumerable<BookingLengthDto> BookingLength()
+    {
+        var bookingLength = _bookingRepository.getBookingLength();
+        if (!FreeRoomsToday().Any())
+        {
+            return null;
+        }
+
+        return bookingLength;
     }
 }
