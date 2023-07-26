@@ -36,10 +36,4 @@ public class NewEmployeeValidator : AbstractValidator<NewEmployeeDto>
     {
         return _employeeRepository.IsNotExist(arg);
     }
-
-    private bool IsSameGuid(Guid guid)
-    {
-        return _employeeRepository.IsSameGuid(guid);
-    }
-    
 }

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ClientServer.Contracts;
 using ClientServer.DTOs.Employees;
+using ClientServer.Models;
 using FluentValidation;
 
 namespace ClientServer.Utilities.Validations.Employees;
@@ -25,7 +26,7 @@ public class EmployeeValidator : AbstractValidator<EmployeeDto>
         RuleFor(e => e.Email)
             .NotEmpty().WithMessage("Email is required")
             .EmailAddress().WithMessage("Email is not valid")
-            .Must((e, s) => IsDuplicateValue(e.Email, e.Guid)).WithMessage("Email already exist");
+            .Must((e, s) => IsDuplicateValue(s, e.Guid)).WithMessage("Email already exist");
         RuleFor(e => e.PhoneNumber)
             .NotEmpty()
             .MaximumLength(20)
@@ -36,7 +37,9 @@ public class EmployeeValidator : AbstractValidator<EmployeeDto>
     private bool IsDuplicateValue(string arg, Guid guid)
     {
         var temp = false;
-        var (email, phone) = GetEmailPhone(guid);
+        var employee = _employeeRepository.GetByGuid(guid);
+        var email = employee?.Email;
+        var phone = employee?.PhoneNumber;
         if (arg == email || arg == phone)
         {
             temp = true;
@@ -45,11 +48,4 @@ public class EmployeeValidator : AbstractValidator<EmployeeDto>
         var result = _employeeRepository.IsNotExist(arg) || temp;
         return result;
     }
-
-    private (string?, string?) GetEmailPhone(Guid guid)
-    {
-        var employee = _employeeRepository.GetByGuid(guid);
-        return (employee.Email, employee.PhoneNumber);
-    }
-    
 }

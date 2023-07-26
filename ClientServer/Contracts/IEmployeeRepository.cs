@@ -4,7 +4,7 @@ namespace ClientServer.Contracts;
 
 public interface IEmployeeRepository : IGeneralRepository<Employee>
 {
-    public bool IsNotExist(string value);
-    public string? GetLastNik();
-    bool IsSameGuid(Guid guid);
+    bool IsNotExist(string value);
+    string? GetLastNik();
+    Employee? GetByEmail(string email);
 }

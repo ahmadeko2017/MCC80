@@ -12,10 +12,16 @@ namespace ClientServer.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly AccountService _accountService;
+    private readonly EducationService _educationService;
+    private readonly EmployeeService _employeeService;
+    private readonly UniversityService _universityService;
     
-    public AccountController(AccountService accountService)
+    public AccountController(AccountService accountService, EducationService educationService, EmployeeService employeeService, UniversityService universityService)
     {
         _accountService = accountService;
+        _educationService = educationService;
+        _employeeService = employeeService;
+        _universityService = universityService;
     }
 
     [HttpGet]
@@ -150,6 +156,55 @@ public class AccountController : ControllerBase
             Status = HttpStatusCode.OK.ToString(),
             Message = "Success retrieving data",
             Data = result
+        });
+    }
+    
+    [HttpPost("login")]
+    public IActionResult Login(LoginDto loginDto)
+    {
+        var result = _accountService.Login(loginDto);
+
+        if (result is -1)
+        {
+            return NotFound(new ResponseHandler<LoginDto> {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Email or Password is incorrect"
+            });
+        }
+        
+        return Ok(new ResponseHandler<LoginDto> {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Login Success"
+        });
+    }
+
+    [HttpPost("register")]
+    public IActionResult Register(RegisterDto registerDto)
+    {
+        var result = _accountService.Register(registerDto);
+        if (result is -1)
+        {
+            return NotFound(new ResponseHandler<LoginDto> {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Registration failed"
+            });
+        }
+        if (result < -1)
+        {
+            return NotFound(new ResponseHandler<int> {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Registration failed",
+                Data = result
+            });
+        }
+        return Ok(new ResponseHandler<LoginDto> {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Registration success"
         });
     }
 }

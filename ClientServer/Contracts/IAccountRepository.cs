@@ -1,4 +1,5 @@
-﻿using ClientServer.Models;
+﻿using ClientServer.DTOs.Accounts;
+using ClientServer.Models;
 
 namespace ClientServer.Contracts;
 
