@@ -47,13 +47,26 @@ public class BookingRepository : GeneralRepository<Booking>, IBookingRepository
         var bookings = GetAll();
         foreach (var booking in bookings)
         {
-            var startDate = booking.StartDate;
+            var currentDate = booking.StartDate;
             var endDate = booking.EndDate;
-            var room = _roomRepository.GetByGuid(booking.RoomGuid);
-            if (startDate.DayOfWeek != DayOfWeek.Saturday && startDate.DayOfWeek != DayOfWeek.Sunday)
+            
+            while (currentDate <= endDate)
             {
-                timeSpan = endDate - startDate;
+                // Memeriksa apakah hari saat ini adalah Sabtu atau Minggu
+                if (currentDate.DayOfWeek != DayOfWeek.Saturday && currentDate.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    // Hari kerja, menghitung waktu kerja dengan memperhitungkan jam
+                    DateTime openRoom = currentDate.Date.AddHours(9); // Misalnya, waktu kerja dimulai pada pukul 09:00
+                    DateTime closeRoom = currentDate.Date.AddHours(17).AddMinutes(30); // Misalnya, waktu kerja selesai pada pukul 17:30
+
+                    TimeSpan dayTime = closeRoom - openRoom;
+                    timeSpan += dayTime;
+                }
+
+                currentDate = currentDate.AddDays(1); // Pindah ke hari berikutnya
             }
+            
+            var room = _roomRepository.GetByGuid(booking.RoomGuid);
 
             var bookingLengthDto = new BookingLengthDto()
             {
