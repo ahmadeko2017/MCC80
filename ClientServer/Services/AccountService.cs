@@ -203,45 +203,85 @@ public class AccountService
     }
 
     public int ChangePassword(ChangePasswordDto changePasswordDto)
-    {
-        var isExist = _employeeRepository.CheckEmail(changePasswordDto.Email);
-        if (isExist is null)
         {
-            return -1;
-        }
+            var isExist = _employeeRepository.CheckEmail(changePasswordDto.Email);
+            if (isExist is null)
+            {
+                return -1; //Account not found
+            }
 
-        var getAccount = _accountRepository.GetByGuid(isExist.Guid);
-        var account = new Account()
-        {
-            Guid = getAccount.Guid,
-            IsUsed = true,
-            ModifiedDate = DateTime.Now,
-            CreatedDate = getAccount.CreatedDate,
-            OTP = getAccount.OTP,
-            ExpiredTime = getAccount.ExpiredTime,
-            Password = changePasswordDto.NewPassword
-        };
-        if (getAccount.OTP != changePasswordDto.OTP)
-        {
-            return 0;
-        }
+            var getAccount = _accountRepository.GetByGuid(isExist.Guid);
+            if (getAccount.OTP != changePasswordDto.OTP)
+            {
+                return 0;
+            }
 
-        if (getAccount.IsUsed == true)
+            if (getAccount.IsUsed)
+            {
+                return 1;
+            }
+
+            if (getAccount.ExpiredTime < DateTime.Now)
+            {
+                return 2;
+            }
+
+            var account = new Account
+            {
+                Guid = getAccount.Guid,
+                IsUsed = true,
+                ModifiedDate = DateTime.Now,
+                CreatedDate = getAccount.CreatedDate,
+                OTP = getAccount.OTP,
+                ExpiredTime = getAccount.ExpiredTime,
+                Password = changePasswordDto.NewPassword
+            };
+
+            var isUpdated = _accountRepository.Update(account);
+            if (!isUpdated)
+            {
+                return 0; //Account Not Update
+            }
+
+            return 3;
+        }
+        public int ForgotPassword(ForgotPasswordDto forgotPassword)
         {
+            /*var employee = _employeeRepository.GetByEmail(forgotPassword.Email);
+            if (employee is null)
+                return 0; // Email not found
+            var account = _accountRepository.GetByGuid(employee.Guid);
+            if (account is null)
+                return -1;*/
+
+            var getAccountDetail = (from e in _employeeRepository.GetAll()
+                                    join a in _accountRepository.GetAll() on e.Guid equals a.Guid
+                                    where e.Email == forgotPassword.Email
+                                    select a).FirstOrDefault();
+
+            _accountRepository.Clear();
+            if (getAccountDetail is null)
+            {
+                return 0;
+            }
+
+            var otp = new Random().Next(111111, 999999);
+            var account = new Account
+            {
+                Guid = getAccountDetail.Guid,
+                Password = getAccountDetail.Password,
+                ExpiredTime = DateTime.Now.AddMinutes(5),
+                OTP = otp,
+                IsUsed = false,
+                CreatedDate = getAccountDetail.CreatedDate,
+                ModifiedDate = DateTime.Now
+            };
+
+            var isUpdated = _accountRepository.Update(account);
+
+            if (!isUpdated)
+                return -1;
+
             return 1;
         }
-
-        if (getAccount.ExpiredTime < DateTime.Now)
-        {
-            return 2;
-        }
-
-        var isUpdated = _accountRepository.Update(account);
-        if (!isUpdated)
-        {
-            return 0;
-        }
-
-        return 3;
-    }
 }

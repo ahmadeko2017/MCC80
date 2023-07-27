@@ -76,4 +76,9 @@ public class GeneralRepository<TEntity> : IGeneralRepository<TEntity> where TEnt
     {
         return GetByGuid(guid) is not null;
     }
+    
+    public void Clear()
+    {
+        _context.ChangeTracker.Clear();
+    }
 }

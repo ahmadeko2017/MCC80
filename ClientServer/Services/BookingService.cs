@@ -138,7 +138,6 @@ public class BookingService
                         timeSpan += dayTime;
                     }
                 }
-
                 currentDate = currentDate.AddDays(1); // Pindah ke hari berikutnya
             }
             
