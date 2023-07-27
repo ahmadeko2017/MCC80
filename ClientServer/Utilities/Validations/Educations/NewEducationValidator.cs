@@ -4,11 +4,11 @@ using FluentValidation;
 
 namespace ClientServer.Utilities.Validations.Educations;
 
-public class NewEducationValidation : AbstractValidator<EducationDto>
+public class NewEducationValidator : AbstractValidator<EducationDto>
 {
     private readonly IEducationRepository _educationRepository;
 
-    public NewEducationValidation(IEducationRepository educationRepository)
+    public NewEducationValidator(IEducationRepository educationRepository)
     {
         _educationRepository = educationRepository;
         RuleFor(e => e.Guid)

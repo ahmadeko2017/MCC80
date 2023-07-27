@@ -4,11 +4,11 @@ using FluentValidation;
 
 namespace ClientServer.Utilities.Validations.Bookings;
 
-public class NewBookingValidation : AbstractValidator<NewBookingDto>
+public class NewBookingValidator : AbstractValidator<NewBookingDto>
 {
     private readonly IBookingRepository _bookingRepository;
 
-    public NewBookingValidation(IBookingRepository bookingRepository)
+    public NewBookingValidator(IBookingRepository bookingRepository)
     {
         _bookingRepository = bookingRepository;
         RuleFor(b => b.StartDate)

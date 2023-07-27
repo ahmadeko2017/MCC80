@@ -6,11 +6,11 @@ using FluentValidation;
 
 namespace ClientServer.Utilities.Validations.Accounts
 {
-    public class NewAccountValidation : AbstractValidator<AccountDto>
+    public class NewAccountValidator : AbstractValidator<AccountDto>
     {
         private readonly IAccountRepository _accountRepository;
 
-        public NewAccountValidation(IAccountRepository accountRepository)
+        public NewAccountValidator(IAccountRepository accountRepository)
         {
             _accountRepository = accountRepository;
             RuleFor(a => a.Guid)
