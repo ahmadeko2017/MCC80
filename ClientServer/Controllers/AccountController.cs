@@ -209,36 +209,27 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("forgot-password")]
-    public IActionResult ForgotPassword(ForgotPasswordDto forgotPasswordDto)
+    public IActionResult ForgetPassword(ForgotPasswordDto forgotPasswordDto)
     {
-        var isUpdated = _accountService.ForgotPasswordDto(forgotPasswordDto);
+        var isUpdated = _accountService.ForgotPassword(forgotPasswordDto);
         if (isUpdated == 0)
-        {
-            return NotFound(new ResponseHandler<ForgotPasswordDto>()
-            {
+            return NotFound(new ResponseHandler<ForgotPasswordDto> {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
                 Message = "Email not found"
             });
-        }
 
-        if (isUpdated == -1)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                new ResponseHandler<ForgotPasswordDto>()
-                {
-                    Code = StatusCodes.Status500InternalServerError,
-                    Status = HttpStatusCode.InternalServerError.ToString(),
-                    Message = "Error retrieving data from the ddatabase"
-                });
-        }
+        if (isUpdated is -1)
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<ForgotPasswordDto> {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Error retrieving data from the database"
+            });
 
-        return Ok(new ResponseHandler<ForgotPasswordDto>()
-        {
+        return Ok(new ResponseHandler<ForgotPasswordDto> {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
-            Message = "Otp has been sent to your email",
-            Data = forgotPasswordDto
+            Message = "Otp has been sent to your email"
         });
     }
     

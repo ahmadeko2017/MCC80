@@ -91,20 +91,11 @@ public class EmployeeService
 
     public IEnumerable<EmployeeDetailDto> GetAllEmployeeDetail()
     {
-        var employees = _employeeRepository.GetAll();
-        if (!employees.Any())
-        {
-            return Enumerable.Empty<EmployeeDetailDto>();
-        }
-
-        var employeeDetailDto = new List<EmployeeDetailDto>();
-        foreach (var employee in employees)
-        {
-            var education = _educationRepository.GetByGuid(employee.Guid);
-            var university = _universityRepository.GetByGuid(education.UniversityGuid);
-
-            var employeeDetail = new EmployeeDetailDto()
-            {
+        var result = from employee in _employeeRepository.GetAll()
+            join education in _educationRepository.GetAll() on employee.Guid equals education.Guid
+            join university in _universityRepository.GetAll() on education.UniversityGuid equals
+                university.Guid
+            select new EmployeeDetailDto {
                 EmployeeGuid = employee.Guid,
                 NIK = employee.NIK,
                 FullName = employee.FirstName + " " + employee.LastName,
@@ -118,11 +109,8 @@ public class EmployeeService
                 GPA = education.GPA,
                 UniversityName = university.Name
             };
-            
-            employeeDetailDto.Add(employeeDetail);
-        }
 
-        return employeeDetailDto;
+        return result;
     }
 
     public EmployeeDetailDto? GetEmployeeDetailByGuid(Guid guid)

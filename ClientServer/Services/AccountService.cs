@@ -4,6 +4,7 @@ using ClientServer.DTOs.Educations;
 using ClientServer.DTOs.Employees;
 using ClientServer.Models;
 using ClientServer.Utilities.Handlers;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClientServer.Services;
 
@@ -13,13 +14,15 @@ public class AccountService
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IUniversityRepository _universityRepository;
     private readonly IEducationRepository _educationRepository;
+    private readonly DbContext _dbContext;
 
-    public AccountService(IAccountRepository accountRepository, IEmployeeRepository employeeRepository, IEducationRepository educationRepository, IUniversityRepository universityRepository)
+    public AccountService(IAccountRepository accountRepository, IEmployeeRepository employeeRepository, IEducationRepository educationRepository, IUniversityRepository universityRepository, DbContext dbContext)
     {
         _accountRepository = accountRepository;
         _employeeRepository = employeeRepository;
         _educationRepository = educationRepository;
         _universityRepository = universityRepository;
+        _dbContext = dbContext;
     }
 
     public IEnumerable<AccountDto> GetAll()
@@ -106,101 +109,71 @@ public class AccountService
     }
 
     public int Register(RegisterDto registerDto)
-    {
-        var newEmployeeDto = new NewEmployeeDto()
         {
-            FirstName = registerDto.FirstName,
-            LastName = registerDto.LastName,
-            BirthDate = registerDto.BitrhDate,
-            Gender = registerDto.Gender,
-            HiringDate = registerDto.HiringDate,
-            Email = registerDto.Email,
-            PhoneNumber = registerDto.PhoneNumber
-        };
-        
-        var lastNik = _employeeRepository.GetLastNik();
-        Employee emp = newEmployeeDto;
-        emp.NIK = GenerateHandler.NIK(lastNik);
-        
-        var employee = _employeeRepository.Create(emp);
-        if (employee is null)
-        {
-            return -1; // Error while insert employee
-        }
-        
-        var newAccountDto = new AccountDto()
-        {
-            Guid = employee.Guid,
-            ExpiredTime = DateTime.Now.Add(new TimeSpan(365)),
-            IsDeleted = false,
-            IsUsed = false,
-            OTP = GenerateHandler.OTP(4),
-            Password = registerDto.Password
-        };
-        var account = _accountRepository.Create(newAccountDto);
-        if (account is null)
-        {
-            return -2; // Account fail to create
-        }
+            // ini untuk cek emaik sama phone number udah ada atau belum
+            if (!_employeeRepository.IsNotExist(registerDto.Email) ||
+                !_employeeRepository.IsNotExist(registerDto.PhoneNumber))
+            {
+                return 0; // kalau sudah ada, pendaftaran gagal.
+            }
 
-        var university = _universityRepository.GetByCode(registerDto.UniversityCode);
-        if (university is null)
-        {
-            return -3; // University not found
+            using var transaction = _dbContext.Database.BeginTransaction();
+            try
+            {
+                var university = _universityRepository.GetByCode(registerDto.UniversityCode);
+                if (university is null)
+                {
+                    // Jika universitas belum ada, buat objek University baru dan simpan
+                    var createUniversity = _universityRepository.Create(new University {
+                        Code = registerDto.UniversityCode,
+                        Name = registerDto.UniversityName
+                    });
+
+                    university = createUniversity;
+                }
+
+                var newNik =
+                    GenerateHandler.NIK(_employeeRepository
+                                           .GetLastNik()); //karena niknya generate, sebelumnya kalo ga dikasih ini niknya null jadi error
+                var employeeGuid = Guid.NewGuid(); // Generate GUID baru untuk employee
+
+                // Buat objek Employee dengan nilai GUID baru
+                var employee = _employeeRepository.Create(new Employee {
+                    Guid = employeeGuid, //ambil dari variabel yang udah dibuat diatas
+                    NIK = newNik,        //ini juga
+                    FirstName = registerDto.FirstName,
+                    LastName = registerDto.LastName,
+                    BirthDate = registerDto.BirthDate,
+                    Gender = registerDto.Gender,
+                    HiringDate = registerDto.HiringDate,
+                    Email = registerDto.Email,
+                    PhoneNumber = registerDto.PhoneNumber
+                });
+
+
+                var education = _educationRepository.Create(new Education {
+                    Guid = employeeGuid, // Gunakan employeeGuid
+                    Major = registerDto.Major,
+                    Degree = registerDto.Degree,
+                    GPA = registerDto.GPA,
+                    UniversityGuid = university.Guid
+                });
+
+                var account = _accountRepository.Create(new Account {
+                    Guid = employeeGuid, // Gunakan employeeGuid
+                    OTP = 1,             //sementara ini dicoba gabisa diisi angka nol didepan, tadi masukin 098 error
+                    IsUsed = true,
+                    Password = registerDto.Password
+                });
+                transaction.Commit();
+                return 1;
+            }
+            catch
+            {
+                transaction.Rollback();
+                return -1;
+            }
         }
-        
-        var newEducationDto = new EducationDto()
-        {
-            Guid = employee.Guid,
-            Major = registerDto.Major,
-            Degree = registerDto.Degree,
-            GPA = registerDto.GPA,
-            UniversityGuid = university.Guid
-        };
-
-        var education = _educationRepository.Create(newEducationDto);
-        if (education is null)
-        {
-            return -4;
-        }
-        
-        return 1;
-    }
-
-    public int ForgotPasswordDto(ForgotPasswordDto forgotPasswordDto)
-    {
-        var employee = _employeeRepository.GetByEmail(forgotPasswordDto.Email);
-        if (employee is null)
-        {
-            return 0; // Email not found
-        }
-
-        var account = _accountRepository.GetByGuid(employee.Guid);
-        if (account is null)
-        {
-            return -1;
-        }
-
-        var otp = new Random().Next(111111, 999999);
-        var isUpdated = _accountRepository.Update(new Account()
-        {
-            Guid = account.Guid,
-            Password = account.Password,
-            ExpiredTime = DateTime.Now.AddMinutes(5),
-            OTP = otp,
-            IsUsed = false,
-            CreatedDate = account.CreatedDate,
-            ModifiedDate = DateTime.Now
-        });
-
-        if (!isUpdated)
-        {
-            return -1;
-        }
-
-        forgotPasswordDto.Email = $"{otp}";
-        return 1;
-    }
 
     public int ChangePassword(ChangePasswordDto changePasswordDto)
         {
