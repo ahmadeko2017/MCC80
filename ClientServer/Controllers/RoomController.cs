@@ -151,4 +151,30 @@ public class RoomController : ControllerBase
                 Data = result
             });
     }
+
+    [HttpGet("booked-room")]
+    public IActionResult GetBookedRoom()
+    {
+        var result = _roomService.GetRoom();
+        if (result is null)
+        {
+            return NotFound(new ResponseHandler<RoomDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "data not found"
+            });
+        }
+        else
+        {
+            return Ok(
+                new ResponseHandler<IEnumerable<BookedRoomDto>>
+                {
+                    Code = StatusCodes.Status200OK,
+                    Status = HttpStatusCode.OK.ToString(),
+                    Message = "Success retrieving data",
+                    Data = result
+                });
+        }
+    }
 }

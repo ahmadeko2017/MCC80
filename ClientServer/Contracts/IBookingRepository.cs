@@ -6,6 +6,4 @@ namespace ClientServer.Contracts;
 
 public interface IBookingRepository : IGeneralRepository<Booking>
 {
-    IEnumerable<RoomDto> GetFreeRoomsToday();
-    IEnumerable<BookingLengthDto> getBookingLength();
 }

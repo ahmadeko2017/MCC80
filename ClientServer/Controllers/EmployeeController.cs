@@ -152,4 +152,50 @@ public class EmployeeController : ControllerBase
             Data = result
         });
     }
+
+    [HttpGet("detail")]
+    public IActionResult GetAllEmployeeDetail()
+    {
+        var result = _employeeService.GetAllEmployeeDetail();
+        if (!result.Any())
+        {
+            return NotFound(new ResponseHandler<EmployeeDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Data not found"
+            });
+        }
+        
+        return Ok(new ResponseHandler<IEnumerable<EmployeeDetailDto>>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
+    }
+
+    [HttpGet("detail/{guid}")]
+    public IActionResult GetEmployeeDetailByGui(Guid guid)
+    {
+        var result = _employeeService.GetEmployeeDetailByGuid(guid);
+        if (result is null)
+        {
+            return NotFound(new ResponseHandler<EmployeeDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Guid not found"
+            });
+        }
+        
+        return Ok(new ResponseHandler<EmployeeDetailDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success retrieving data",
+            Data = result
+        });
+    }
 }

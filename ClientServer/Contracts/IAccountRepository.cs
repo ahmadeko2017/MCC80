@@ -5,4 +5,5 @@ namespace ClientServer.Contracts;
 
 public interface IAccountRepository : IGeneralRepository<Account>
 {
+    
 }

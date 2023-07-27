@@ -18,5 +18,10 @@ public class UniversityRepository : GeneralRepository<University>, IUniversityRe
         return _context.Set<University>().SingleOrDefault(u => u.Code.Contains(code));
     }
 
+    public Guid GetLastUniversityGuid()
+    {
+        return _context.Set<University>().LastOrDefault().Guid;
+    }
+
     #endregion
 }

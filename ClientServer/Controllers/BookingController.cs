@@ -185,7 +185,7 @@ public class BookingController : ControllerBase
     public IActionResult BookingLength()
     {
         var result = _bookingService.BookingLength();
-        if (result is null)
+        if (!result.Any())
         {
             return NotFound(new ResponseHandler<BookingLengthDto>
             {
