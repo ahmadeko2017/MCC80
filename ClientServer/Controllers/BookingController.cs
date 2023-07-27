@@ -157,7 +157,7 @@ public class BookingController : ControllerBase
         });
     }
     
-    [HttpGet("FreeRoomsToday")]
+    [HttpGet("Free-roooms-today")]
     public IActionResult FreeRoomsToday()
     {
         var result = _bookingService.FreeRoomsToday();
@@ -181,7 +181,7 @@ public class BookingController : ControllerBase
             });
     }
 
-    [HttpGet("BookingLength")]
+    [HttpGet("booking-length")]
     public IActionResult BookingLength()
     {
         var result = _bookingService.BookingLength();
@@ -197,6 +197,52 @@ public class BookingController : ControllerBase
 
         return Ok(
             new ResponseHandler<IEnumerable<BookingLengthDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success retrieving data",
+                Data = result
+            });
+    }
+
+    [HttpGet("detail")]
+    public IActionResult GetAllDetail()
+    {
+        var result = _bookingService.getDetailAll();
+        if (!result.Any())
+        {
+            return NotFound(new ResponseHandler<BookingLengthDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Data is not found"
+            });
+        }
+        return Ok(
+            new ResponseHandler<IEnumerable<DetailBookingDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success retrieving data",
+                Data = result
+            });
+    }
+
+    [HttpGet("detail/{guid}")]
+    public IActionResult GetDetailByGuid(Guid guid)
+    {
+        var result = _bookingService.getDetailByGuid(guid);
+        if (result is null)
+        {
+            return NotFound(new ResponseHandler<DetailBookingDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Data is not found"
+            });
+        }
+        return Ok(
+            new ResponseHandler<DetailBookingDto>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
