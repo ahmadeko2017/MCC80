@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "8ZSLFdp4VvVW2zAAuqI3k5MWHSPE+Koeu5jLbn9W2soZ3wUTucK3yPpME2QP1W6epvCr6iDv4Dg5GVHTnrbQnA==",
+  "dgSpecHash": "0mo7c72U9Pxz4p+3butmslqWBvWtWYKFUzzChS0AhVY3dc1hhWMQ/nVw/ID4ufPaNJzmBSIuGd/LR1d+34NUmg==",
   "success": true,
   "projectFilePath": "D:\\workspace\\Metrodata\\DOTNET\\MCC80\\ClientServer\\ClientServer.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\ahmad\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\ahmad\\.nuget\\packages\\fluentvalidation\\11.6.0\\fluentvalidation.11.6.0.nupkg.sha512",
     "C:\\Users\\ahmad\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.3.0\\fluentvalidation.aspnetcore.11.3.0.nupkg.sha512",
     "C:\\Users\\ahmad\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.5.1\\fluentvalidation.dependencyinjectionextensions.11.5.1.nupkg.sha512",

@@ -1,7 +1,6 @@
 ﻿using ClientServer.Contracts;
+using ClientServer.Data;
 using ClientServer.DTOs.Accounts;
-using ClientServer.DTOs.Educations;
-using ClientServer.DTOs.Employees;
 using ClientServer.Models;
 using ClientServer.Utilities.Handlers;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,7 @@ public class AccountService
     private readonly IEducationRepository _educationRepository;
     private readonly DbContext _dbContext;
 
-    public AccountService(IAccountRepository accountRepository, IEmployeeRepository employeeRepository, IEducationRepository educationRepository, IUniversityRepository universityRepository, DbContext dbContext)
+    public AccountService(IAccountRepository accountRepository, IEmployeeRepository employeeRepository, IEducationRepository educationRepository, IUniversityRepository universityRepository, BookingDbContext dbContext)
     {
         _accountRepository = accountRepository;
         _employeeRepository = employeeRepository;
@@ -93,19 +92,21 @@ public class AccountService
 
     public int Login(LoginDto loginDto)
     {
-        var getEmployee = _employeeRepository.GetByEmail(loginDto.Email);
-        if (getEmployee is null)
+        var employeeAccount = from e in _employeeRepository.GetAll()
+            join a in _accountRepository.GetAll() on e.Guid equals a.Guid
+            where e.Email == loginDto.Email && HashingHandler.ValidateHash(loginDto.Password, a.Password)
+            select new LoginDto()
+            {
+                Email = e.Email,
+                Password = a.Password
+            };
+
+        if (!employeeAccount.Any())
         {
-            return -1; // Email not found
+            return -1;
         }
 
-        var getAccount = _accountRepository.GetByGuid(getEmployee.Guid);
-        if (getAccount.Password == loginDto.Password)
-        {
-            return 1; // Login Success
-        }
-
-        return -1; // Email or Password incorrect.                         
+        return 1; // Email or Password incorrect.                         
     }
 
     public int Register(RegisterDto registerDto)
@@ -163,7 +164,7 @@ public class AccountService
                     Guid = employeeGuid, // Gunakan employeeGuid
                     OTP = 1,             //sementara ini dicoba gabisa diisi angka nol didepan, tadi masukin 098 error
                     IsUsed = true,
-                    Password = registerDto.Password
+                    Password = HashingHandler.GenerateHash(registerDto.Password)
                 });
                 transaction.Commit();
                 return 1;
@@ -207,7 +208,7 @@ public class AccountService
                 CreatedDate = getAccount.CreatedDate,
                 OTP = getAccount.OTP,
                 ExpiredTime = getAccount.ExpiredTime,
-                Password = changePasswordDto.NewPassword
+                Password = HashingHandler.GenerateHash(changePasswordDto.NewPassword)
             };
 
             var isUpdated = _accountRepository.Update(account);
@@ -220,13 +221,6 @@ public class AccountService
         }
         public int ForgotPassword(ForgotPasswordDto forgotPassword)
         {
-            /*var employee = _employeeRepository.GetByEmail(forgotPassword.Email);
-            if (employee is null)
-                return 0; // Email not found
-            var account = _accountRepository.GetByGuid(employee.Guid);
-            if (account is null)
-                return -1;*/
-
             var getAccountDetail = (from e in _employeeRepository.GetAll()
                                     join a in _accountRepository.GetAll() on e.Guid equals a.Guid
                                     where e.Email == forgotPassword.Email
@@ -242,7 +236,7 @@ public class AccountService
             var account = new Account
             {
                 Guid = getAccountDetail.Guid,
-                Password = getAccountDetail.Password,
+                Password = HashingHandler.GenerateHash(getAccountDetail.Password),
                 ExpiredTime = DateTime.Now.AddMinutes(5),
                 OTP = otp,
                 IsUsed = false,

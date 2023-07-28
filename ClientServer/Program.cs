@@ -1,8 +1,6 @@
 using System.Reflection;
 using ClientServer.Contracts;
-using ClientServer.Controllers;
 using ClientServer.Data;
-using ClientServer.Models;
 using ClientServer.Repositories;
 using ClientServer.Services;
 using FluentValidation;
