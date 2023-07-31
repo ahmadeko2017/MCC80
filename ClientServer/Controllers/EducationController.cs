@@ -3,12 +3,14 @@ using ClientServer.DTOs.Educations;
 using ClientServer.DTOs.Universities;
 using ClientServer.Services;
 using ClientServer.Utilities.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientServer.Controllers;
 
 [ApiController]
 [Route("api/educations")]
+[Authorize]
 public class EducationController : ControllerBase
 {
     private readonly EducationService _educationService;

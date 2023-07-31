@@ -1,5 +1,8 @@
-﻿using ClientServer.Contracts;
+﻿using System.Security.Claims;
+using ClientServer.Contracts;
+using ClientServer.Controllers;
 using ClientServer.Data;
+using ClientServer.DTOs.AccountRoles;
 using ClientServer.DTOs.Accounts;
 using ClientServer.Models;
 using ClientServer.Utilities.Handlers;
@@ -13,15 +16,21 @@ public class AccountService
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IUniversityRepository _universityRepository;
     private readonly IEducationRepository _educationRepository;
+    private readonly IAccountRoleRepository _accountRoleRepository;
     private readonly DbContext _dbContext;
+    private readonly IEmailHandler _emailHandler;
+    private readonly ITokenHandler _tokenHandler;
 
-    public AccountService(IAccountRepository accountRepository, IEmployeeRepository employeeRepository, IEducationRepository educationRepository, IUniversityRepository universityRepository, BookingDbContext dbContext)
+    public AccountService(IAccountRepository accountRepository, IEmployeeRepository employeeRepository, IEducationRepository educationRepository, IUniversityRepository universityRepository, BookingDbContext dbContext, IEmailHandler emailHandler, ITokenHandler tokenHandler, IAccountRoleRepository accountRoleRepository)
     {
         _accountRepository = accountRepository;
         _employeeRepository = employeeRepository;
         _educationRepository = educationRepository;
         _universityRepository = universityRepository;
         _dbContext = dbContext;
+        _emailHandler = emailHandler;
+        _tokenHandler = tokenHandler;
+        _accountRoleRepository = accountRoleRepository;
     }
 
     public IEnumerable<AccountDto> GetAll()
@@ -90,7 +99,7 @@ public class AccountService
         return result ? 1 : 0;
     }
 
-    public int Login(LoginDto loginDto)
+    public string Login(LoginDto loginDto)
     {
         var employeeAccount = from e in _employeeRepository.GetAll()
             join a in _accountRepository.GetAll() on e.Guid equals a.Guid
@@ -103,10 +112,29 @@ public class AccountService
 
         if (!employeeAccount.Any())
         {
-            return -1;
+            return "-1"; // Email or Password incorrect.      
         }
 
-        return 1; // Email or Password incorrect.                         
+        var employee = _employeeRepository.GetByEmail(loginDto.Email);
+        var claims = new List<Claim>
+        {
+            new Claim("Guid", employee.Guid.ToString()),
+            new Claim("FullName", $"{employee.FirstName} {employee.LastName}"),
+            new Claim("Email", employee.Email)
+        };
+        
+        var getRoles = _accountRoleRepository.GetRoleNamesByAccountGuid(employee.Guid);
+        foreach (var role in getRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+        
+        var generateToken = _tokenHandler.GenerateToken(claims);
+        if (generateToken is null)
+        {
+            return "-2";
+        }
+        return generateToken;                
     }
 
     public int Register(RegisterDto registerDto)
@@ -164,8 +192,16 @@ public class AccountService
                     Guid = employeeGuid, // Gunakan employeeGuid
                     OTP = 1,             //sementara ini dicoba gabisa diisi angka nol didepan, tadi masukin 098 error
                     IsUsed = true,
-                    Password = HashingHandler.GenerateHash(registerDto.Password)
+                    Password = HashingHandler.GenerateHash(registerDto.Password),
+                    CreatedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now,
+                    ExpiredTime = DateTime.Now
                 });
+                var accountRole = _accountRoleRepository.Create((new NewAccountRoleDto()
+                {
+                    AccountGuid = account.Guid,
+                    RoleGuid = Guid.Parse("4887ec13-b482-47b3-9b24-08db91a71770")
+                }));
                 transaction.Commit();
                 return 1;
             }
@@ -248,7 +284,9 @@ public class AccountService
 
             if (!isUpdated)
                 return -1;
-
+            
+            _emailHandler.SendEmail(forgotPassword.Email,"Booking - Forgot Password OTP", $"Your OTP is {otp}");
+            
             return 1;
         }
 }

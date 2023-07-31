@@ -3,12 +3,14 @@ using ClientServer.DTOs.Accounts;
 using ClientServer.DTOs.Universities;
 using ClientServer.Services;
 using ClientServer.Utilities.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientServer.Controllers;
 
 [ApiController]
 [Route("api/accounts")]
+[Authorize]
 public class AccountController : ControllerBase
 {
     private readonly AccountService _accountService;
@@ -160,11 +162,12 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost("login")]
+    [AllowAnonymous]
     public IActionResult Login(LoginDto loginDto)
     {
         var result = _accountService.Login(loginDto);
 
-        if (result is -1)
+        if (result is "-1")
         {
             return NotFound(new ResponseHandler<LoginDto> {
                 Code = StatusCodes.Status404NotFound,
@@ -172,15 +175,30 @@ public class AccountController : ControllerBase
                 Message = "Email or Password is incorrect"
             });
         }
+
+        if (result is "-2")
+        {
+            return StatusCode(500, new ResponseHandler<AccountDto>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Error when generate token."
+            });
+        }
         
-        return Ok(new ResponseHandler<LoginDto> {
+        return Ok(new ResponseHandler<TokenDto> {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
-            Message = "Login Success"
+            Message = "Login Success. ",
+            Data = new TokenDto()
+            {
+                Token = result
+            }
         });
     }
 
     [HttpPost("register")]
+    [AllowAnonymous]
     public IActionResult Register(RegisterDto registerDto)
     {
         var result = _accountService.Register(registerDto);

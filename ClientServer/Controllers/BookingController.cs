@@ -5,12 +5,14 @@ using ClientServer.DTOs.Universities;
 using ClientServer.Models;
 using ClientServer.Services;
 using ClientServer.Utilities.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientServer.Controllers;
 
 [ApiController]
 [Route("api/bookings")]
+[Authorize]
 public class BookingController : ControllerBase
 {
     private readonly BookingService _bookingService;
@@ -158,6 +160,7 @@ public class BookingController : ControllerBase
     }
     
     [HttpGet("Free-roooms-today")]
+    [AllowAnonymous]
     public IActionResult FreeRoomsToday()
     {
         var result = _bookingService.FreeRoomsToday();

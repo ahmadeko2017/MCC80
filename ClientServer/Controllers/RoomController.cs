@@ -3,12 +3,14 @@ using ClientServer.DTOs.Rooms;
 using ClientServer.DTOs.Universities;
 using ClientServer.Services;
 using ClientServer.Utilities.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientServer.Controllers;
 
 [ApiController]
 [Route("api/rooms")]
+[Authorize(Roles = "Manager")]
 public class RoomController : ControllerBase
 {
     private readonly RoomService _roomService;
@@ -153,6 +155,7 @@ public class RoomController : ControllerBase
     }
 
     [HttpGet("booked-room")]
+    [AllowAnonymous]
     public IActionResult GetBookedRoom()
     {
         var result = _roomService.GetRoom();

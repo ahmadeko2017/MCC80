@@ -14,10 +14,7 @@ public class BookingDbContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<Room> Rooms { get; set; }
     public DbSet<University> Universities { get; set; }
-
-    #region Overrides of DbContext
-
-    /// <inheritdoc />
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -27,7 +24,10 @@ public class BookingDbContext : DbContext
             e.Email,
             e.PhoneNumber
         }).IsUnique();
+        modelBuilder.Entity<Role>().HasData(new NewRoleDefaultDto
+        {
+            Guid = Guid.Parse("4887ec13-b482-47b3-9b24-08db91a71770"),
+            Name = "Employee"
+        });
     }
-
-    #endregion
 }

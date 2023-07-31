@@ -21,9 +21,6 @@ namespace ClientServer.Utilities.Validations.Accounts
                 .MinimumLength(6).WithMessage("Password must be at least 6 characters long")
                 .MaximumLength(50).WithMessage("Password cannot exceed 50 characters");
 
-            RuleFor(a => a.OTP)
-                .NotEmpty().WithMessage("OTP is required");
-
             RuleFor(a => a.ExpiredTime)
                 .NotEmpty().WithMessage("Expired time is required")
                 .Must(BeValidDateTime).WithMessage("Invalid expired time");

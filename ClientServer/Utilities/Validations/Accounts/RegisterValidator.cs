@@ -20,7 +20,6 @@ public class RegisterValidator : AbstractValidator<RegisterDto>
             .NotEmpty()
             .LessThanOrEqualTo(DateTime.Now.AddYears(-10));
         RuleFor(r => r.Gender)
-            .NotEmpty()
             .IsInEnum();
         RuleFor(r => r.HiringDate)
             .NotEmpty();
@@ -43,7 +42,7 @@ public class RegisterValidator : AbstractValidator<RegisterDto>
             .NotEmpty();
         RuleFor(register => register.Password)
             .NotEmpty().WithMessage("Password is required")
-            .Matches(@"^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[^a-zA-Z\d]).{8,}$");
+            .Matches(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$");
         RuleFor(register => register.ConfirmPassword)
             .Equal(register => register.Password)
             .WithMessage("Passwords do not match");

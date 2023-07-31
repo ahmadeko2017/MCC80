@@ -3,12 +3,14 @@ using ClientServer.DTOs.AccountRoles;
 using ClientServer.DTOs.Universities;
 using ClientServer.Services;
 using ClientServer.Utilities.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientServer.Controllers;
 
 [ApiController]
 [Route("api/accountroles")]
+[Authorize]
 public class AccountRoleController : ControllerBase
 {
     private readonly AccountRoleService _accountRoleService;

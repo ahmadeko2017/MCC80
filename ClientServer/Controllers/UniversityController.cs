@@ -2,12 +2,14 @@
 using ClientServer.DTOs.Universities;
 using ClientServer.Services;
 using ClientServer.Utilities.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientServer.Controllers;
 
 [ApiController]
 [Route("api/universities")]
+[Authorize(Roles = "Employee")]
 public class UniversityController : ControllerBase
 {
     private readonly UniversityService _universityService;
