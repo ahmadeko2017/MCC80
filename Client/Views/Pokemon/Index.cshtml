@@ -1,0 +1,23 @@
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutPokemon.cshtml";
+}
+
+<div class="container">
+        <div class="container sticky-top bg-white p-3">
+            <h2 class="text-center mb-4">Pokédex</h2>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Search Pokemon..." id="searchInput">
+            </div>
+        </div>
+        <div class="row" id="pokemonList">
+            <!-- Pokemon list will be populated dynamically -->
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="myModal" tabindex="-1">
+        <!-- Modal content will be populated dynamically -->
+    </div>
+
