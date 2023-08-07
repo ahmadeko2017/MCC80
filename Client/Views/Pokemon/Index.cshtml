@@ -5,19 +5,42 @@
 }
 
 <div class="container">
-        <div class="container sticky-top bg-white p-3">
-            <h2 class="text-center mb-4">Pokédex</h2>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Search Pokemon..." id="searchInput">
-            </div>
-        </div>
-        <div class="row" id="pokemonList">
-            <!-- Pokemon list will be populated dynamically -->
-        </div>
+    <div class="container sticky-top bg-white p-3">
+      <h2 class="text-center mb-4">Pokédex</h2>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" id="searchInput" placeholder="Search Pokemon...">
+      </div>
     </div>
+    <div class="row" id="pokemonList">
+      <!-- The list of Pokemon will be populated here -->
+    </div>
+  </div>
 
-    <!-- Modal -->
-    <div class="modal" id="myModal" tabindex="-1">
-        <!-- Modal content will be populated dynamically -->
+  <div class="modal fade" id="pokemonModal" tabindex="-1" role="dialog" aria-labelledby="pokemonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="pokemonModalLabel"></h5>
+          <span id="pokemonTypes"></span>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-xs-12 col-md-6">
+              <img src="" alt="" style="width: 100%;" id="pokemonImage">
+            </div>
+            <div class="col-xs-12 col-md-6">
+              <h4>Statistics:</h4>
+              <div id="statsContainer">
+                <!-- Pokemon stats will be populated here -->
+              </div>
+              <h4>Evolution Chain:</h4>
+              <ul id="evolutionChain">
+                <!-- Pokemon evolution chain will be populated here -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 

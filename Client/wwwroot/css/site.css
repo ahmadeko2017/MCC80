@@ -16,3 +16,28 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.progress-bar.hp {
+  background-color: green;
+}
+.progress-bar.attack {
+  background-color: #8B0000; /* Merah tua */
+}
+.progress-bar.defense {
+  background-color: #808080; /* Abu-abu */
+}
+.progress-bar.special-attack {
+  background-color: purple;
+}
+.progress-bar.special-defense {
+  background-color: black;
+}
+.progress-bar.speed {
+  background-color: navy;
+}
+
+/* Style for the Pokemon Modal */
+#pokemonModal .modal-content {
+  background: rgba(255, 255, 255, 0.5); /* Background with transparency */
+  backdrop-filter: blur(20px); /* Blur effect for glassmorphism */
+}

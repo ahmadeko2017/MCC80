@@ -15,6 +15,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = D:\workspace\Metrodata\DOTNET\MCC80\Client
 build_property._RazorSourceGeneratorDebug = 
 
+[D:/workspace/Metrodata/DOTNET/MCC80/Client/Views/DataTable/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGF0YVRhYmxlXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/workspace/Metrodata/DOTNET/MCC80/Client/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -66,6 +70,10 @@ build_metadata.AdditionalFiles.CssScope = b-18b0ti8jes
 [D:/workspace/Metrodata/DOTNET/MCC80/Client/Views/Shared/_LayoutBaru.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRCYXJ1LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = b-lsr7fpctc6
+
+[D:/workspace/Metrodata/DOTNET/MCC80/Client/Views/Shared/_LayoutDataTables.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXREYXRhVGFibGVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = b-d97ubf43wi
 
 [D:/workspace/Metrodata/DOTNET/MCC80/Client/Views/Shared/_LayoutPokemon.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRQb2tlbW9uLmNzaHRtbA==

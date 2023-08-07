@@ -221,3 +221,4 @@ D:\workspace\Metrodata\DOTNET\MCC80\Client\obj\Debug\net6.0\ref\Client.dll
 D:\workspace\Metrodata\DOTNET\MCC80\Client\obj\Debug\net6.0\scopedcss\Views\Shared\_LayoutBaru.cshtml.rz.scp.css
 D:\workspace\Metrodata\DOTNET\MCC80\Client\obj\Debug\net6.0\scopedcss\Views\Shared\_LayoutArray.cshtml.rz.scp.css
 D:\workspace\Metrodata\DOTNET\MCC80\Client\obj\Debug\net6.0\scopedcss\Views\Shared\_LayoutPokemon.cshtml.rz.scp.css
+D:\workspace\Metrodata\DOTNET\MCC80\Client\obj\Debug\net6.0\scopedcss\Views\Shared\_LayoutDataTables.cshtml.rz.scp.css

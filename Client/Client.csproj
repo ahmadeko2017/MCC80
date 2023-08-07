@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="Views\DataTable\" />
       <Folder Include="Views\Layout\" />
       <Folder Include="Views\Pokemon\" />
       <Folder Include="Views\StarWars\" />
-      <Folder Include="wwwroot\js\pokemon\" />
     </ItemGroup>
 
     <ItemGroup>

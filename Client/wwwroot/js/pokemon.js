@@ -1,272 +1,301 @@
-﻿import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import {Modal, Button, Row, Col, Card, Tooltip, ProgressBar} from 'react-bootstrap';
-
-import bugIcon from './img/bug.png';
-import darkIcon from './img/dark.png';
-import dragonIcon from './img/dragon.png';
-import electricityIcon from './img/electric.png';
-import fairyIcon from './img/fairy.png';
-import fightingIcon from './img/fighting.png';
-import fireIcon from './img/fire.png';
-import flyingIcon from './img/flying.png';
-import ghostIcon from './img/ghost.png';
-import grassIcon from './img/grass.png';
-import groundIcon from './img/ground.png';
-import iceIcon from './img/ice.png';
-import normalIcon from './img/normal.png';
-import poisonIcon from './img/poison.png';
-import psychicIcon from './img/psychic.png';
-import rockIcon from './img/rock.png';
-import steelIcon from './img/steel.png';
-import waterIcon from './img/water.png';
-
-
-const pokemon = () => {
-    const [pokemonList, setPokemonList] = useState([]);
-    const [filteredPokemonList, setFilteredPokemonList] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedType, setSelectedType] = useState('');
-    const [types, setTypes] = useState([]);
-    const [activePokemon, setActivePokemon] = useState(null);
-    const [selectedPokemon, setSelectedPokemon] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [pokemonData, setPokemonData] = useState(null);
-    const [evolutionChain, setEvolutionChain] = useState([]);
-
-    useEffect(() => {
-        const fetchPokemonList = async () => {
-            try {
-                const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=1281');
-                setPokemonList(response.data.results);
-            } catch (error) {
-                console.error('Error fetching Pokemon list:', error);
-            }
-        };
-
-        const fetchPokemonTypes = async () => {
-            try {
-                const response = await axios.get('https://pokeapi.co/api/v2/type');
-                setTypes(response.data.results);
-            } catch (error) {
-                console.error('Error fetching Pokemon types:', error);
-            }
-        };
-
-        fetchPokemonList();
-        fetchPokemonTypes();
-    }, []);
-
-    useEffect(() => {
-        // Filter the list based on search query and selected type
-        const filteredList = pokemonList.filter(
-            (pokemon) =>
-                pokemon.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-                (!selectedType || pokemon.types.some((type) => type.type.name === selectedType))
-        );
-        setFilteredPokemonList(filteredList);
-    }, [searchQuery, selectedType, pokemonList]);
-
-    const getPokemonImage = () => {
-        if (pokemonData && pokemonData.sprites) {
-            return pokemonData.sprites.other['official-artwork'].front_default;
-        }
-        return 'https://via.placeholder.com/150';
-    };
-    const handleInputChange = (event) => {
-        setSearchQuery(event.target.value);
-    };
-    const handlePokemonClick = async (name) => {
-        setActivePokemon(name);
-        setSelectedPokemon(name);
-        setShowModal(true);
-
-        try {
-            const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
-            setPokemonData(response.data);
-
-            const speciesResponse = await axios.get(response.data.species.url);
-            const evolutionChainResponse = await axios.get(speciesResponse.data.evolution_chain.url);
-            const evolutionChain = parseEvolutionChain(evolutionChainResponse.data.chain);
-            setEvolutionChain(evolutionChain);
-        } catch (error) {
-            console.error('Error fetching Pokemon data:', error);
-        }
-    };
-
-    const handleEvolutionChainClick = (name) => {
-        handlePokemonClick(name);
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
-
-    const renderStatProgress = (statName, baseStat) => {
-        const maxStatValue = 255; // The maximum base stat value
-        const percentage = (baseStat / maxStatValue) * 100;
-
-        return (
-            <div key={statName} style={{ marginBottom: '5px' }}>
-                <strong>{statName}:</strong>
-                <ProgressBar now={baseStat} max={maxStatValue} label={baseStat} animated/>
-            </div>
-        );
-    };
-
-    const parseEvolutionChain = (chain) => {
-        let evolutionChain = [];
-        const getEvolutions = (chain) => {
-            const { species, evolves_to } = chain;
-            evolutionChain.push(species.name);
-            if (evolves_to && evolves_to.length > 0) {
-                evolves_to.forEach((evolution) => {
-                    getEvolutions(evolution);
-                });
-            }
-        };
-        getEvolutions(chain);
-        return evolutionChain;
-    };
-
-    const renderTooltip = (types) => (
-        <Tooltip id={`tooltip`}>
-            {types.map((type) => (
-                <span key={type.type.name} style={{ margin: '5px', padding: '5px', borderRadius: '5px' }}>
-          {type.type.name}
-        </span>
-            ))}
-        </Tooltip>
-    );
-
-    const getTypeIcon = (typeName) => {
-        switch (typeName) {
-            case 'bug':
-                return bugIcon;
-            case 'dark':
-                return darkIcon;
-            case 'dragon':
-                return dragonIcon;
-            case 'electric':
-                return electricityIcon;
-            case 'fairy':
-                return fairyIcon;
-            case 'fighting':
-                return fightingIcon;
-            case 'fire':
-                return fireIcon;
-            case 'flying':
-                return flyingIcon;
-            case 'ghost':
-                return ghostIcon;
-            case 'grass':
-                return grassIcon;
-            case 'ground':
-                return groundIcon;
-            case 'ice':
-                return iceIcon;
-            case 'normal':
-                return normalIcon;
-            case 'poison':
-                return poisonIcon;
-            case 'psychic':
-                return psychicIcon;
-            case 'rock':
-                return rockIcon;
-            case 'steel':
-                return steelIcon;
-            case 'water':
-                return waterIcon;
-            // Add other cases for other types
-            default:
-                return null;
-        }
-    };
-
-    return (
-        <div className="container">
-            <div className="container sticky-top bg-white p-3">
-                <h2 className="text-center mb-4">Pokédex</h2>
-                <div className="input-group mb-3">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search Pokemon..."
-                        value={searchQuery}
-                        onChange={handleInputChange}
-                    />
-                </div>
-            </div>
-            <Row>
-                {filteredPokemonList.slice(0, 50).map((pokemon) => (
-                    <Col xs={6} sm={4} md={3} key={pokemon.name}>
-                        <Card
-                            className="mb-3"
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => handlePokemonClick(pokemon.name)}
-                        >
-                            <Card.Body>
-                                <Card.Title className="text-center">{pokemon.name}</Card.Title>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
-            <Modal show={showModal} onHide={handleCloseModal} className="modal-lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>{pokemonData?.name} <span> </span>
-                        {pokemonData?.types.map((type) => (
-                            <img
-                                key={type.type.name}
-                                src={getTypeIcon(type.type.name)}
-                                alt={type.type.name}
-                                style={{
-                                    width: '40px',
-                                    height: '40px',
-                                }}
-                            />
-                        ))}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Row>
-
-                        <Col xs={12} md={6}>
-                            <img
-                                src={getPokemonImage(pokemonData?.name)}
-                                alt={pokemonData?.name}
-                                style={{ width: '100%' }}
-                            />
-                        </Col>
-                        <Col xs={12} md={6}>
-                            <h4>Statistics:</h4>
-                            <div>
-                                {pokemonData?.stats.map((stat) =>
-                                    renderStatProgress(stat.stat.name, stat.base_stat)
-                                )}
-                            </div>
-                            <h4>Evolution Chain:</h4>
-                            <ul>
-                                {evolutionChain.map((evolution) => (
-                                    <li
-                                        key={evolution}
-                                        style={{ cursor: 'pointer' }}
-                                        onClick={() => handleEvolutionChainClick(evolution)}
-                                    >
-                                        {evolution}
-                                    </li>
-                                ))}
-                            </ul>
-                        </Col>
-                    </Row>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </div>
-    );
+﻿// Function to fetch data from the API
+const fetchData = async (url) => {
+    try {
+        const response = await fetch(url);
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
 };
 
-export default pokemon;
+// Function to get the Pokemon image URL
+const getPokemonImage = (sprites) => {
+    if (
+        sprites &&
+        sprites.other &&
+        sprites.other["official-artwork"] &&
+        sprites.other["official-artwork"].front_default
+    ) {
+        return sprites.other["official-artwork"].front_default;
+    }
+    return "https://via.placeholder.com/150";
+};
+
+// Function to render the Pokemon statistics
+const renderStatProgress = (statName, baseStat) => {
+    const maxStatValue = 255; // The maximum base stat value
+    const percentage = (baseStat / maxStatValue) * 100;
+
+    let statClass = "";
+    switch (statName) {
+        case "hp":
+            statClass = "hp";
+            break;
+        case "attack":
+            statClass = "attack";
+            break;
+        case "defense":
+            statClass = "defense";
+            break;
+        case "special-attack":
+            statClass = "special-attack";
+            break;
+        case "special-defense":
+            statClass = "special-defense";
+            break;
+        case "speed":
+            statClass = "speed";
+            break;
+        default:
+            statClass = "";
+            break;
+    }
+
+    return `
+    <div style="margin-bottom: 5px;">
+      <strong>${statName}:</strong>
+      <div class="progress">
+        <div class="progress-bar ${statClass}" role="progressbar" style="width: ${percentage}%" aria-valuenow="${baseStat}" aria-valuemin="0" aria-valuemax="${maxStatValue}">${baseStat}</div>
+      </div>
+    </div>
+  `;
+};
+
+// Function to handle click on a Pokemon card
+const handlePokemonClick = async (name) => {
+    try {
+        const response = await fetchData(
+            `https://pokeapi.co/api/v2/pokemon/${name}`,
+        );
+        const pokemonData = response;
+
+        const speciesResponse = await fetchData(pokemonData.species.url);
+        const evolutionChainResponse = await fetchData(
+            speciesResponse.evolution_chain.url,
+        );
+        const evolutionChain = parseEvolutionChain(evolutionChainResponse.chain);
+
+        renderPokemonModal(pokemonData, evolutionChain);
+        $("#pokemonModal").modal("show");
+    } catch (error) {
+        console.error("Error fetching Pokemon data:", error);
+    }
+};
+
+// Function to parse the evolution chain
+const parseEvolutionChain = (chain) => {
+    let evolutionChain = [];
+    const getEvolutions = (chain) => {
+        const { species, evolves_to } = chain;
+        evolutionChain.push(species.name);
+        if (evolves_to && evolves_to.length > 0) {
+            evolves_to.forEach((evolution) => {
+                getEvolutions(evolution);
+            });
+        }
+    };
+    getEvolutions(chain);
+    return evolutionChain;
+};
+
+// Function to render the Pokemon modal
+// const renderPokemonModal = (pokemonData, evolutionChain) => {
+//     const modalTitle = document.getElementById("pokemonModalLabel");
+//     const modalImage = document.getElementById("pokemonImage");
+//     const modalTypes = document.getElementById("pokemonTypes");
+//     const statsContainer = document.getElementById("statsContainer");
+//     const evolutionList = document.getElementById("evolutionChain");
+//
+//     modalTitle.innerHTML = `${pokemonData.name} ${pokemonData.types
+//         .map(
+//             (type) =>
+//                 `<img src="${getTypeIcon(type.type.name)}" alt="${
+//                     type.type.name
+//                 }" style="width: 40px; height: 40px;">
+//                 <span style="margin: 5px; padding: 5px; border-radius: 5px;" >${type.type.name}</span>`
+//            
+//         )
+//         .join("")}`;
+//     modalImage.src = getPokemonImage(pokemonData.sprites);
+//
+//     statsContainer.innerHTML = `${pokemonData.stats
+//         .map((stat) => renderStatProgress(stat.stat.name, stat.base_stat))
+//         .join("")}`;
+//
+//     evolutionList.innerHTML = `${evolutionChain
+//         .map(
+//             (evolution) =>
+//                 `<li style="cursor: pointer;" onclick="handleEvolutionChainClick('${evolution}')">${evolution}</li>`,
+//         )
+//         .join("")}`;
+// };
+
+const renderPokemonModal = (pokemonData, evolutionChain) => {
+    const modalTitle = document.getElementById("pokemonModalLabel");
+    const modalImage = document.getElementById("pokemonImage");
+    const modalTypes = document.getElementById("pokemonTypes");
+    const statsContainer = document.getElementById("statsContainer");
+    const evolutionList = document.getElementById("evolutionChain");
+    const modalElement = document.getElementById("pokemonModal");
+
+    const typeColors = {
+        normal: "rgba(168,168,120,0.5)",
+        fire: "rgba(240,128,48,0.5)",
+        water: "rgba(104,144,240,0.5)",
+        electric: "rgba(248,208,48,0.5)",
+        grass: "rgba(120,200,80,0.5)",
+        ice: "rgba(152,216,216,0.5)",
+        fighting: "rgba(192,48,40,0.5)",
+        poison: "rgba(160,64,160,0.5)",
+        ground: "rgba(224,192,104,0.5)",
+        flying: "rgba(168,144,240,0.5)",
+        psychic: "rgba(248,88,136,0.5)",
+        bug: "rgba(168,184,32,0.5)",
+        rock: "rgba(184,160,56,0.5)",
+        ghost: "rgba(112,88,152,0.5)",
+        dragon: "rgba(112,56,248,0.5)",
+        dark: "rgba(112,88,72,0.5)",
+        steel: "rgba(184,184,208,0.5)",
+        fairy: "rgba(238,153,172,0.5)",
+        // tambahkan warna lain sesuai dengan jenis tipe Pokemon yang Anda miliki
+    };
+
+
+    // Fungsi untuk membuat elemen dengan gaya latar belakang sesuai tipe Pokemon
+    const createTypeElement = (type) => {
+        const typeElement = document.createElement("span");
+        typeElement.innerHTML = type.type.name;
+        typeElement.style.margin = "5px";
+        typeElement.style.padding = "5px";
+        typeElement.style.borderRadius = "5px";
+        typeElement.style.backgroundColor = typeColors[type.type.name];
+        typeElement.style.color = "white"; // Set warna teks menjadi putih agar terlihat lebih baik pada background yang berwarna
+        return typeElement;
+    };
+
+    // Bersihkan konten sebelumnya pada elemen modal
+    modalTitle.innerHTML = "";
+    modalTypes.innerHTML = "";
+    statsContainer.innerHTML = "";
+    evolutionList.innerHTML = "";
+
+    // Tambahkan judul modal
+    const modalTitleContent = document.createElement("div");
+    modalTitleContent.innerHTML = `${pokemonData.name} ${pokemonData.types
+        .map((type) => `<img src="${getTypeIcon(type.type.name)}" alt="${type.type.name}" style="width: 40px; height: 40px;">`)
+        .join("")}`;
+    modalTitle.appendChild(modalTitleContent);
+
+    // Tambahkan tipe Pokemon ke dalam elemen modalTypes
+    pokemonData.types.forEach((type) => {
+        const typeElement = createTypeElement(type);
+        modalTypes.appendChild(typeElement);
+    });
+
+    // Tambahkan gambar Pokemon
+    modalImage.src = getPokemonImage(pokemonData.sprites);
+
+    // Tambahkan stat Pokemon
+    pokemonData.stats.forEach((stat) => {
+        const statElement = document.createElement("div");
+        statElement.innerHTML = renderStatProgress(stat.stat.name, stat.base_stat);
+        statsContainer.appendChild(statElement);
+    });
+
+    // Tambahkan daftar evolusi Pokemon
+    evolutionList.innerHTML = `${evolutionChain
+        .map((evolution) => `<li style="cursor: pointer;" onclick="handleEvolutionChainClick('${evolution}')">${evolution}</li>`)
+        .join("")}`;
+
+    // Tambahkan gaya latar belakang modal sesuai dengan tipe Pokemon pertama
+    const modalBackground = typeColors[pokemonData.types[0].type.name];
+    modalElement.style.backgroundColor = modalBackground;
+};
+
+// Function to handle click on an evolution chain item
+const handleEvolutionChainClick = (name) => {
+    handlePokemonClick(name);
+};
+
+// Function to get the Pokemon type icon
+const typeIcons = {
+    bug: './img/bug.png',
+    dark: './img/dark.png',
+    dragon: './img/dragon.png',
+    electric: './img/electric.png',
+    fairy: './img/fairy.png',
+    fighting: './img/fighting.png',
+    fire: './img/fire.png',
+    flying: './img/flying.png',
+    ghost: './img/ghost.png',
+    grass: './img/grass.png',
+    ground: './img/ground.png',
+    ice: './img/ice.png',
+    normal: './img/normal.png',
+    poison: './img/poison.png',
+    psychic: './img/psychic.png',
+    rock: './img/rock.png',
+    steel: './img/steel.png',
+    water: './img/water.png',
+};
+
+const getTypeIcon = (typeName) => {
+    return typeIcons[typeName] || null;
+};
+
+// Function to render the list of Pokemon cards
+const renderPokemonList = (pokemonList) => {
+    const pokemonListContainer = document.getElementById("pokemonList");
+    pokemonListContainer.innerHTML = "";
+
+    let i = 1;
+    pokemonList.slice(0, 50).forEach((pokemon) => {
+        const card = document.createElement("div");
+        card.classList.add("col-xs-6", "col-sm-4", "col-md-3");
+        card.innerHTML = `
+        <div class="card mb-3" style="cursor: pointer;" onclick="handlePokemonClick('${pokemon.name}')">
+          <div class="card-body">
+            <h5 class="card-title text-center">${pokemon.name}</h5>
+          </div>
+        </div>
+      `;
+        pokemonListContainer.appendChild(card);
+    });
+};
+
+// Function to handle input change on the search field
+const handleInputChange = (event) => {
+    const searchQuery = event.target.value.toLowerCase();
+    const filteredList = pokemonData.filter(
+        (pokemon) =>
+            pokemon.name.toLowerCase().includes(searchQuery)
+    );
+    console.log(filteredList, searchQuery);
+    renderPokemonList(filteredList);
+};
+
+// Function to fetch the Pokemon list and types
+const fetchPokemonData = async () => {
+    try {
+        const [pokemonList, types] = await Promise.all([
+            fetchData("https://pokeapi.co/api/v2/pokemon?limit=1281"),
+            fetchData("https://pokeapi.co/api/v2/type"),
+        ]);
+        pokemonData = pokemonList.results;
+        renderPokemonList(pokemonList.results);
+    } catch (error) {
+        console.error("Error fetching Pokemon data:", error);
+    }
+};
+
+
+// Initial data loading
+let selectedType = "";
+// let pokemonList = [];
+let pokemonData = JSON;
+fetchPokemonData();
+
+// Event listeners
+document
+    .getElementById("searchInput")
+    .addEventListener("input", handleInputChange);
